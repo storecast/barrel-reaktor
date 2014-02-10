@@ -33,6 +33,8 @@ def get_basket_from_request(request):
             basket = Basket.get_by_id(token, basket_id)
         # this basket is stale
         except ReaktorEntityError:
+            if 'profile' not in locals():
+                profile = ReaktorProfile.for_reaktor_user(request.reaktor_user)
             profile.remove_basket_id_for_marker(settings.BASKET_MARKER, basket_id)
             basket_id = None
 
@@ -42,6 +44,8 @@ def get_basket_from_request(request):
         request.session[key] = basket.id
         # add the newly created basket id to the user's reaktor profile
         if request.reaktor_user.is_authenticated():
+            if 'profile' not in locals():
+                profile = ReaktorProfile.for_reaktor_user(request.reaktor_user)
             profile.append_basket_id_for_marker(settings.BASKET_MARKER, basket.id)
             profile.save()
 
