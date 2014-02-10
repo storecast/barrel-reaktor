@@ -1,11 +1,10 @@
 from apps.barrel import Store, Field, BooleanField, DateField, IntField, EmbeddedStoreField
-from apps.barrel.rpc import RpcMixin, rpc_call
+from apps.barrel.rpc import RpcMixin, rpc_call, deprecated_with
 from apps.reaktor_barrel.models import Price
 from apps.reaktor_barrel.document.models import Document
 from apps.reaktor_barrel.voucher.models import Voucher
 from django.utils.translation import ugettext as _
 from money import Money
-from warnings import warn
 
 
 class Item(Store):
@@ -253,11 +252,9 @@ class Basket(Store, RpcMixin):
         return cls.signature(method='getBasket', args=[token, basket_id])
 
     @classmethod
+    @deprecated_with('checkoutBasket', 'checkoutBasketAsynchronously')
     @rpc_call
     def checkout(cls, token, basket_id, method_preference, checkout_props):
-        # checkoutBasket is deprecated
-        #TODO (Iurii Kudriavtsev): maybe create a decorator that warns about the deprecated reaktor calls
-        warn(Warning("`checkoutBasket` call is deprecated - use `checkoutBasketAsynchronously` instead."))
         return cls.signature(method='checkoutBasket', data_converter=CheckoutResult, args=[token, basket_id, method_preference, checkout_props])
 
     @classmethod
