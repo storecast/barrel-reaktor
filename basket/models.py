@@ -1,5 +1,5 @@
 from apps.barrel import Store, Field, BooleanField, DateField, IntField, EmbeddedStoreField
-from apps.barrel.rpc import RpcMixin, deprecated_with
+from apps.barrel.rpc import RpcMixin
 from apps.reaktor_barrel.models import Price
 from apps.reaktor_barrel.document.models import Document
 from apps.reaktor_barrel.voucher.models import Voucher
@@ -247,9 +247,8 @@ class Basket(Store, RpcMixin):
         return cls.signature(method='getBasket', args=[token, basket_id])
 
     @classmethod
-    @deprecated_with('checkoutBasket', 'checkoutBasketAsynchronously')
     def checkout(cls, token, basket_id, method_preference, checkout_props):
-        return cls.signature(method='checkoutBasket', data_converter=CheckoutResult, args=[token, basket_id, method_preference, checkout_props])
+        return cls.signature(method='checkoutBasket', data_converter=CheckoutResult, args=[token, basket_id, method_preference, checkout_props], deprecated='checkoutBasketAsynchronously')
 
     @classmethod
     def create(cls, token, marker=None):
