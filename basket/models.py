@@ -1,5 +1,5 @@
 from apps.barrel import Store, Field, BooleanField, DateField, IntField, EmbeddedStoreField
-from apps.barrel.rpc import RpcMixin, rpc_call, deprecated_with
+from apps.barrel.rpc import RpcMixin, deprecated_with
 from apps.reaktor_barrel.models import Price
 from apps.reaktor_barrel.document.models import Document
 from apps.reaktor_barrel.voucher.models import Voucher
@@ -47,7 +47,6 @@ class DocumentItem(Item, RpcMixin):
     document = EmbeddedStoreField(target='item', store_class=Document)
 
     @classmethod
-    @rpc_call
     def set_basket_quantity(cls, token, basket_id, doc_id, quantity):
         """Reaktor `WSDocMgmt.changeDocumentBasketPosition` call.
         If `quantity` is 0, then removes the document from the basket.
@@ -64,7 +63,6 @@ class GiftCardItem(Item, RpcMixin):
     giftcard = EmbeddedStoreField(target='item', store_class=Voucher)
 
     @classmethod
-    @rpc_call
     def set_basket_quantity(cls, token, basket_id, voucher_code, quantity):
         """This method should call the similar to `changeDocumentBasketPosition` reaktor method, handling Voucher.
         """
@@ -84,7 +82,6 @@ class VoucherItem(Store, RpcMixin):
     discount = EmbeddedStoreField(target='discountAmount', store_class=Price)
 
     @classmethod
-    @rpc_call
     def apply(cls, token, code, basket_id):
         """Reaktor `WSVoucherMgmt.addVoucherToBasket` call.
         Returns `Result` object.
@@ -92,7 +89,6 @@ class VoucherItem(Store, RpcMixin):
         return cls.signature(method='addVoucherToBasket', args=[token, code, basket_id], data_converter=cls.Result)
 
     @classmethod
-    @rpc_call
     def remove(cls, token, code, basket_id):
         """Reaktor `WSVoucherMgmt.removeVoucherFromBasket` call.
         Returns `Result` object.
@@ -247,18 +243,15 @@ class Basket(Store, RpcMixin):
         return payment_methods
 
     @classmethod
-    @rpc_call
     def get_by_id(cls, token, basket_id):
         return cls.signature(method='getBasket', args=[token, basket_id])
 
     @classmethod
     @deprecated_with('checkoutBasket', 'checkoutBasketAsynchronously')
-    @rpc_call
     def checkout(cls, token, basket_id, method_preference, checkout_props):
         return cls.signature(method='checkoutBasket', data_converter=CheckoutResult, args=[token, basket_id, method_preference, checkout_props])
 
     @classmethod
-    @rpc_call
     def create(cls, token, marker=None):
         return cls.signature(method='getNewBasket', args=[token, marker])
 

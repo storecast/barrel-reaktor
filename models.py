@@ -1,5 +1,5 @@
 from apps.barrel import Store, Field, FloatField
-from apps.barrel.rpc import RpcMixin, rpc_call
+from apps.barrel.rpc import RpcMixin
 
 
 class Nature(Store, RpcMixin):
@@ -10,7 +10,6 @@ class Nature(Store, RpcMixin):
     auth_hash_method = Field(target='authenticationHashAlgorithm')
 
     @classmethod
-    @rpc_call
     def load(cls, name):
         return cls.signature(method='getNature', args=[name])
 
