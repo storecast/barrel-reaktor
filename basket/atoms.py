@@ -92,6 +92,8 @@ def address_form(reaktor_user, has_billing_address, form, disabled_fields, csrf_
     if state and state.lower() != "null":
         address['location'] = u', '.join((address['location'], state))
 
+    address_empty = address.get('firstname') is None and address.get('lastname') is None and  address.get('address') is None and address.get('zipcode') is None and address.get('location') is None and address.get('country') is None
+
     return {
         'reaktor_user': reaktor_user,
         'address': address,
@@ -99,7 +101,8 @@ def address_form(reaktor_user, has_billing_address, form, disabled_fields, csrf_
         'form': form,
         'disabled_fields': disabled_fields,
         'csrf_token': csrf_token,
-        'site_conf': site_conf
+        'site_conf': site_conf,
+        'address_empty': address_empty
     }
 
 
