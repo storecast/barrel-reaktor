@@ -79,7 +79,11 @@ class VoucherItem(Store, RpcMixin):
         basket = EmbeddedStoreField(target='basket', store_class='Basket')
 
     voucher = EmbeddedStoreField(target='voucher', store_class=Voucher)
-    discount = EmbeddedStoreField(target='discountAmount', store_class=Price)
+    _discount = EmbeddedStoreField(target='discountAmount', store_class=Price)
+
+    @property
+    def discount(self):
+        return Money(amount=self._discount.amount, currency=self._discount.currency)
 
     @classmethod
     def apply(cls, token, code, basket_id):

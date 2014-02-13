@@ -1,4 +1,4 @@
-from apps.barrel import Store, Field, LongIntField, EmbeddedStoreField
+from apps.barrel import Store, Field, LongIntField, IntField, EmbeddedStoreField
 from apps.barrel.rpc import RpcMixin
 from apps.reaktor_barrel.models import Price
 from money import Money
@@ -9,6 +9,7 @@ from money import Money
 class Voucher(Store, RpcMixin):
     code = LongIntField(target='code')
     text = Field(target='text')
+    percentage = IntField(target='percentage')
     _initial_amount = EmbeddedStoreField(target='initialAmount', store_class=Price)
     _amount = EmbeddedStoreField(target='amount', store_class=Price)
     # not sure if it is needed
