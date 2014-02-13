@@ -61,7 +61,6 @@ class Search(RpcMixin):
     interface = 'WSSearchDocument'
 
     @classmethod
-    @rpc_call
     def documents(cls, token, search_string, offset, number_of_results, sort=None, direction=None, include_search_fields=None, sources=None, related=None, options=None):
         """Returns documents for a given string."""
         invert = direction == 'desc'
@@ -71,7 +70,6 @@ class Search(RpcMixin):
             args=[token, search_string, sources, offset, number_of_results, sort, invert, related, include_search_fields, options])
 
     @classmethod
-    @rpc_call
     def suggestions(cls, token, search_string, number_of_results, sources=None, highlight=None):
         """Returns document suggestions for a given string."""
         args = [token, search_string, sources, number_of_results]
