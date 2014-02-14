@@ -30,7 +30,7 @@ class WishlistItem(ShoppingListItem):
         return cls.signature(method='removeDocumentFromCommercialWishList', args=[token, doc_id])
 
 
-class PreorderlistItem(Store):
+class PreorderlistItem(ShoppingListItem):
     @classmethod
     def add_to_list(cls, token, doc_id):
         """Preorder logic for adding item to a list. Note that the reaktor handles this one
