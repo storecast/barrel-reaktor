@@ -5,11 +5,11 @@ from babel import Locale
 from django import forms
 from django.conf import settings
 from django.contrib import messages
-from django.contrib.localflavor.ca.forms import CAProvinceField, CAProvinceSelect
-from django.contrib.localflavor.ca.ca_provinces import PROVINCE_CHOICES as CA_PROVINCE_CHOICES
-from django.contrib.localflavor.de.forms import DEZipCodeField
-from django.contrib.localflavor.us.forms import USStateField, USStateSelect, USZipCodeField
-from django.contrib.localflavor.us.us_states import STATE_CHOICES as US_STATE_CHOICES
+from localflavor.ca.forms import CAProvinceField, CAProvinceSelect
+from localflavor.ca.ca_provinces import PROVINCE_CHOICES as CA_PROVINCE_CHOICES
+from localflavor.de.forms import DEZipCodeField
+from localflavor.us.forms import USStateField, USStateSelect, USZipCodeField
+from localflavor.us.us_states import STATE_CHOICES as US_STATE_CHOICES
 from django.http import QueryDict
 from django.utils.translation import ugettext, ugettext_lazy as _
 
