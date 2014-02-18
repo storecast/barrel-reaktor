@@ -3,9 +3,9 @@ from django.shortcuts import redirect
 from babeldjango.templatetags.babel import currencyfmt
 import simplejson as json
 
-from txtr_skins.apps.jinja_lib.ext.djangojinja2 import get_env
-from txtr_skins.apps.compact_url import reverse
-from txtr_skins.apps.reaktor_auth.decorators import login_required_on_render
+from apps.jinja_lib.ext.djangojinja2 import get_env
+from apps.compact_url import reverse
+from apps.reaktor_auth.decorators import login_required_on_render
 from . import get_basket_from_request, update_basket_for_request
 
 

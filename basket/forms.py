@@ -13,11 +13,11 @@ from django.http import QueryDict
 from django.utils.translation import ugettext, ugettext_lazy as _
 
 from apps.reaktor_auth.forms import CustomErrorList
-from txtr_skins.apps.reaktor.forms import ReaktorForm
-from txtr_skins.apps.reaktor.mapper import WST_MAP_EMPTY_VALUE_VARIANTS
-from txtr_skins.apps.reaktor_users import get_current_reaktor_user
-from txtr_skins.apps.reaktor_users.mapper import SETTINGS_FROM_API, SETTINGS_TO_API
-from txtr_skins.apps.reaktor_users.models import ReaktorUser
+from apps.reaktor.forms import ReaktorForm
+from apps.reaktor.mapper import WST_MAP_EMPTY_VALUE_VARIANTS
+from apps.reaktor_users import get_current_reaktor_user
+from apps.reaktor_users.mapper import SETTINGS_FROM_API, SETTINGS_TO_API
+from apps.reaktor_users.models import ReaktorUser
 
 from apps.reaktor_barrel.basket.models import VoucherItem
 

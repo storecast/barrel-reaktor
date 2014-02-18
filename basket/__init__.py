@@ -3,7 +3,7 @@
 from django.contrib import messages
 from django.conf import settings
 from django.utils.translation import ugettext_lazy as _
-from txtr_skins.apps.reaktor_auth.models import ReaktorProfile
+from apps.reaktor_auth.models import ReaktorProfile
 from libs.own.holon.reaktor import ReaktorEntityError, ReaktorApiError
 
 from apps.reaktor_barrel.basket.models import Basket, DocumentItem
