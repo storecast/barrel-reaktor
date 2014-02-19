@@ -1,5 +1,5 @@
 from apps.barrel import Store, DateField, EmbeddedStoreField
-from apps.barrel.rpc import RpcMixin, rpc_call
+from apps.barrel.rpc import RpcMixin
 from apps.reaktor_barrel.document.models import Document
 
 
@@ -11,11 +11,11 @@ class ShoppingListItem(Store, RpcMixin):
 
     @classmethod
     def add_to_list(cls):
-        pass
+        raise NotImplementedError()
 
     @classmethod
     def remove_from_list(cls):
-        pass
+        raise NotImplementedError()
 
 
 class WishlistItem(ShoppingListItem):
@@ -33,10 +33,10 @@ class WishlistItem(ShoppingListItem):
 class PreorderlistItem(ShoppingListItem):
     @classmethod
     def add_to_list(cls, token, doc_id):
-        """Preorder logic for adding item to a list. Note that the reaktor handles this one
-        based on the status of document. It is provided here for the sake of consistency.
+        """Adding an item to the preorder list is done by buying a document not yet released.
+        So this method shouldn't be used.
         """
-        return cls.signature(method='addDocumentToCommercialWishList', args=[token, doc_id])
+        raise NotImplementedError("Checkout process is needed to add something to the preorder list.")
 
     @classmethod
     def remove_from_list(cls, token, doc_id):
