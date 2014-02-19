@@ -89,6 +89,10 @@ class Document(Store, RpcMixin):
     def undiscounted_price(self):
         return Money(amount=self.attributes.undiscounted_price, currency=self.attributes.currency)
 
+    @property
+    def is_preorder(self):
+        return self.catalog_state == 'PRE_RELEASE'
+
     @classmethod
     def get_by_id(cls, token, doc_id):
         """Returns `Document` instance for the given id."""
