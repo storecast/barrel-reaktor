@@ -26,6 +26,7 @@ from apps.reaktor_barrel.basket.models import VoucherItem
 # BillingAddressForm start
 ##############################################################################
 
+
 class BillingAddressForm(ReaktorForm):
     """
     Form for the billing address used in the checkout plugin.
@@ -55,7 +56,6 @@ class BillingAddressForm(ReaktorForm):
     disabled_fields_for_facebook_users = True
     reaktor_changed = False
 
-
     def _get_territories(self, territories):
         """Filter Babel territories to exclude non ISO 3166-2 territories.
 
@@ -66,7 +66,6 @@ class BillingAddressForm(ReaktorForm):
             k: v for k, v in territories.items() if re.match(r'[a-zA-Z]{2}', k)
         }
         return result
-
 
     def _get_country_choices(self, country_code):
         """
@@ -94,7 +93,6 @@ class BillingAddressForm(ReaktorForm):
         choices.sort(key=lambda x:x[1])
         return choices
 
-
     def _init_country(self):
         """Initialise the country field."""
         country_code = self.request.nature.home_country.upper()
@@ -104,7 +102,6 @@ class BillingAddressForm(ReaktorForm):
             label=_('Country'),
             initial=country_code)
 
-
     def _prepend_state_select_hint(self, label):
         """Prepend the state select with a 'please select' hint."""
         if not 'state' in self.fields:
@@ -113,7 +110,6 @@ class BillingAddressForm(ReaktorForm):
         choices = self.fields['state'].widget.choices
         if choices[0][0] != '':
             choices.insert(0, ('', '--- ' + label))
-
 
     def __init__(self, *args, **kwargs):
         if isinstance(args[0], ReaktorUser):
@@ -131,7 +127,6 @@ class BillingAddressForm(ReaktorForm):
         super(BillingAddressForm, self).__init__(*args, **kwargs)
         self._init_country()
 
-
     def get_initial_data(self, user):
         """Get initial form data for given user.
 
@@ -139,7 +134,6 @@ class BillingAddressForm(ReaktorForm):
         :return: form-compatible user (settings) data
         """
         return self._reaktor_settings_to_form(user.settings)
-
 
     def _reaktor_settings_to_form(self, settings):
         """Convert the Reaktor user settings to the format used in the form.
@@ -156,7 +150,6 @@ class BillingAddressForm(ReaktorForm):
             data['state'] = ''
 
         return data
-
 
     def _reaktor_errors(self, result):
         """Check if the Reaktor returned errors.
@@ -183,7 +176,6 @@ class BillingAddressForm(ReaktorForm):
             return True
 
         return False
-
 
     def _reaktor_changed_settings(self, result, fields=None):
         """Check if the form-supplied address data is equal to the Reaktor user settings.
@@ -213,7 +205,6 @@ class BillingAddressForm(ReaktorForm):
                 pass
 
         return is_equal
-
 
     def execute(self, fields=None):
         """
@@ -250,7 +241,6 @@ class BillingAddressForm(ReaktorForm):
             self.success_message = ugettext('Your billing address has been changed successfully.')
             return True
 
-
     def is_empty(self):
         """Checks if the address is 'empty'."""
         settings_keys = get_current_reaktor_user().settings.keys()
@@ -258,7 +248,6 @@ class BillingAddressForm(ReaktorForm):
         fields = ['firstname', 'lastname', 'address1', 'address2', 'location', 'state', 'country']
         keys = [prefix + f for f in fields]
         return len(set(keys) & set(settings_keys)) == 0
-
 
 
 class BillingAddressFormUS(BillingAddressForm):
@@ -272,7 +261,6 @@ class BillingAddressFormUS(BillingAddressForm):
         self._prepend_state_select_hint(ugettext('Select your state'))
 
 
-
 class BillingAddressFormCA(BillingAddressForm):
     state = CAProvinceField(required=True,
         widget=CAProvinceSelect, label=_('Province'))
@@ -281,7 +269,6 @@ class BillingAddressFormCA(BillingAddressForm):
     def __init__(self, *args, **kwargs):
         super(BillingAddressFormCA, self).__init__(*args, **kwargs)
         self._prepend_state_select_hint(ugettext('Select your province'))
-
 
 
 class BillingAddressFormDE(BillingAddressForm):
@@ -311,7 +298,6 @@ def get_billing_address_form(data, request):
 ##############################################################################
 
 
-
 class PaymentSettingsForm(ReaktorForm):
     """
     Form for changing payment settings.
@@ -320,7 +306,7 @@ class PaymentSettingsForm(ReaktorForm):
     payment_settings_form = forms.BooleanField(required=True, widget=forms.HiddenInput)
 
     def __init__(self, *args, **kwargs):
-        kwargs.update({'initial':self.get_initial_data()})
+        kwargs.update({'initial': self.get_initial_data()})
         kwargs.pop('initial_data', None) # clean up
         super(PaymentSettingsForm, self).__init__(*args, **kwargs)
 
@@ -337,7 +323,7 @@ class PayNowForm(ReaktorForm):
     pay_now_form = forms.BooleanField(required=True, widget=forms.HiddenInput)
 
     def __init__(self, *args, **kwargs):
-        kwargs.update({'initial':self.get_initial_data()})
+        kwargs.update({'initial': self.get_initial_data()})
         kwargs.pop('initial_data', None) # clean up
         super(PayNowForm, self).__init__(*args, **kwargs)
 
@@ -345,14 +331,15 @@ class PayNowForm(ReaktorForm):
         return self.is_valid()
 
     def get_initial_data(self):
-        return {'pay_now_form':True}
+        return {'pay_now_form': True}
+
 
 class ClearBasketForm(ReaktorForm):
     basket_id = forms.CharField(required=True, widget=forms.HiddenInput)
     clear_basket_form = forms.BooleanField(required=True, widget=forms.HiddenInput)
 
     def __init__(self, *args, **kwargs):
-        kwargs.update({'initial':self.get_initial_data()})
+        kwargs.update({'initial': self.get_initial_data()})
         kwargs.pop('initial_data', None) # clean up
         super(ClearBasketForm, self).__init__(*args, **kwargs)
 
@@ -360,7 +347,8 @@ class ClearBasketForm(ReaktorForm):
         return self.is_valid()
 
     def get_initial_data(self):
-        return {'clear_basket_form':True}
+        return {'clear_basket_form': True}
+
 
 class VoucherForm(ReaktorForm):
     basket_id = forms.CharField(required=True, widget=forms.HiddenInput)
@@ -369,7 +357,7 @@ class VoucherForm(ReaktorForm):
     item_type = forms.CharField(required=True) #voucher, just a marker
 
     def __init__(self, *args, **kwargs):
-        kwargs.update({'initial':self.get_initial_data(),
+        kwargs.update({'initial': self.get_initial_data(),
                        'error_class':CustomErrorList})
         super(VoucherForm, self).__init__(*args, **kwargs)
         self.fields['item_id'].widget.attrs['placeholder'] = _("Enter voucher code")
