@@ -156,7 +156,7 @@ def complete(reaktor_user, basket, has_billing_address, has_payment_data, paymen
 
 
 @atom('atoms/checkout/your_purchase.html')
-def your_purchase(request, basket, store_path, conversion_code, catalog_to_purchase_ids):
+def your_purchase(request, basket, store_path, conversion_code, purchased_items):
     """Atom to render the your purchase section (after checkout complete) in the checkout plugin."""
     return {
         'request': request,
@@ -165,5 +165,5 @@ def your_purchase(request, basket, store_path, conversion_code, catalog_to_purch
         'library_page': Page.objects.on_site().published().get(reverse_id='my', publisher_is_draft=False),
         'store_path': store_path,
         'conversion_code': conversion_code,
-        'catalog_to_purchase_ids': catalog_to_purchase_ids,
+        'purchased_items': purchased_items,
     }
