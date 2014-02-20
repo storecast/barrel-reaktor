@@ -1,9 +1,15 @@
-from django.utils.translation import ungettext
-from django.http import HttpResponse
-import simplejson as json
-
+from apps.jinja_lib.views import JinjaTemplateMixin
+from apps.reaktor_auth.views import ContextTokenMixin
+from apps.reaktor_barrel.shopping_list.models import Preorderlist, PreorderlistItem
 from apps.reaktor_shop.wishlist_models import WishList
 from apps.reaktor_shop.wishlistentry_models import WishListEntry
+from django.contrib import messages
+from django.contrib.auth.decorators import login_required
+from django.http import HttpResponse
+from django.utils.decorators import method_decorator
+from django.utils.translation import ugettext, ungettext
+from django.views.generic import TemplateView
+import simplejson as json
 
 
 def wishlist_status(request):
@@ -61,3 +67,26 @@ def wishlist_remove(request):
         #ungettext('%(num)d book', '%(num)d books', num) % {'num': wishlist_length,}
 
     return HttpResponse(json.dumps(wishlist_update), content_type="application/json")
+
+
+class PreorderlistView(JinjaTemplateMixin, ContextTokenMixin, TemplateView):
+    template_name = 'preorderlist.html'
+    context_object_name = 'preorderlist'
+    # model = None
+
+    def get(self, request, *args, **kwargs):
+        context = self.get_context_data(**kwargs)
+        context['preorderlist'] = Preorderlist.get_by_token(context['token'])
+        return self.render_to_response(context)
+
+    def post(self, request, *args, **kwargs):
+        """Post a doc_id to remove an item from the preorder list."""
+        context = self.get_context_data(**kwargs)
+        PreorderlistItem.remove_from_list(context['token'], request.POST['doc_id'])
+        messages.success(request, ugettext('The document was removed from your pre-order list.'))
+        context['preorderlist'] = Preorderlist.get_by_token(context['token'])
+        return self.render_to_response(context)
+
+    @method_decorator(login_required)
+    def dispatch(self, *args, **kwargs):
+        return super(PreorderlistView, self).dispatch(*args, **kwargs)
