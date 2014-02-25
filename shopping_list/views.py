@@ -82,8 +82,10 @@ class PreorderlistView(JinjaTemplateMixin, ContextTokenMixin, TemplateView):
     def post(self, request, *args, **kwargs):
         """Post a doc_id to remove an item from the preorder list."""
         context = self.get_context_data(**kwargs)
-        PreorderlistItem.remove_from_list(context['token'], request.POST['doc_id'])
-        messages.success(request, ugettext('The document was removed from your pre-order list.'))
+        doc_id = request.POST.get('doc_id')
+        if doc_id:
+            PreorderlistItem.remove_from_list(context['token'], doc_id)
+            messages.success(request, ugettext('The document was removed from your pre-order list.'))
         context['preorderlist'] = Preorderlist.get_by_token(context['token'])
         return self.render_to_response(context)
 
