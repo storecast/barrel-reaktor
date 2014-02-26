@@ -76,9 +76,9 @@ class BillingAddressForm(ReaktorForm):
         """
         # get the current locale
         if self.request.LANGUAGE_CODE:
-            locale = Locale(self.request.LANGUAGE_CODE)
+            locale = Locale.parse(self.request.LANGUAGE_CODE, sep="-")
         else:
-            locale = Locale('en')
+            locale = Locale.parse('en-us', sep="-")
 
         if country_code != 'WO': # international store
             return [(country_code,
