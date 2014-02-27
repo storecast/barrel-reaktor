@@ -75,7 +75,8 @@ def update_item(request):
     response = {'updated': updated, 'action': request.POST.get('item_action')}
     response['length'] = len(basket.items)
     response['total'] = currencyfmt(float(basket.total.amount), basket.total.currency.code)
-    response['undiscounted_total'] = currencyfmt(float(basket.undiscounted_total.amount), basket.total.currency.code)
+    response['undiscounted_total'] = currencyfmt(float(basket.undiscounted_total.amount), basket.undiscounted_total.currency.code)
+    response['tax_total'] = currencyfmt(float(basket.tax_total.amount), basket.tax_total.currency.code)
     if document:
         response["new_item"] = {}
         response["new_item"]["title"] = document.attributes.title
