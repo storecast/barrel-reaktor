@@ -116,6 +116,9 @@ class Preorderlist(Store, RpcMixin):
 
     @property
     def notified_items(self):
+        """Iterate over list items and add notifications to them so that item
+        notifications are placed just next to the items themselves.
+        """
         for item in self.items:
             item.notifications = []
             for notif in self.notifications:

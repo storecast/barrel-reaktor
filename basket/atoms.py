@@ -164,6 +164,7 @@ def your_purchase(request, basket, store_path, conversion_code, purchased_items)
     return {
         'request': request,
         'basket': basket,
+        'preorder': any(map(lambda d: d.is_preorder, basket.documents)),
         'library_path': reverse('user-library'),
         'library_page': Page.objects.on_site().published().get(reverse_id='my', publisher_is_draft=False),
         'store_path': store_path,
