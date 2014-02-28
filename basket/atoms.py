@@ -135,10 +135,10 @@ def complete(reaktor_user, basket, has_billing_address, has_payment_data, paymen
     else:
         label = _("Complete Purchase")
         button_id = "pay-now"
-        # If this becomes a more involved logic, it should be abstracted
-        # by the model.
-        if all(map(lambda d: d.is_preorder, basket.documents)):
-            label = _('Complete Pre-order')
+    # If this becomes a more involved logic, it should be abstracted
+    # by the model.
+    if all(map(lambda d: d.is_preorder, basket.documents)):
+        label = _('Complete Pre-order')
 
     try:
         terms_path = reverse('pages-details-by-slug', args=['terms'])
