@@ -1,4 +1,4 @@
-from apps.barrel import Store, Field, LongIntField, IntField, EmbeddedStoreField
+from apps.barrel import Store, Field, IntField, EmbeddedStoreField
 from apps.barrel.rpc import RpcMixin
 from apps.reaktor_barrel.models import Price
 from money import Money
@@ -7,7 +7,7 @@ from money import Money
 # FIXME: this class is used as embedded for `voucherApplications` as well as for `Voucher` - a gift card
 # thus it might differ from the voucher that comes in the basket position (gift card)
 class Voucher(Store, RpcMixin):
-    code = LongIntField(target='code')
+    code = Field(target='code')
     text = Field(target='text')
     percentage = IntField(target='percentage')
     _initial_amount = EmbeddedStoreField(target='initialAmount', store_class=Price)
