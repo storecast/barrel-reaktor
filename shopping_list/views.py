@@ -70,9 +70,8 @@ def wishlist_remove(request):
 
 
 class PreorderlistView(JinjaTemplateMixin, ContextTokenMixin, TemplateView):
-    template_name = 'preorderlist.html'
+    template_name = 'shopping_list/preorderlist.html'
     context_object_name = 'preorderlist'
-    # model = None
 
     def get(self, request, *args, **kwargs):
         context = self.get_context_data(**kwargs)

@@ -1,0 +1,103 @@
+{% use atoms apps.reaktor_documents.atoms as docs %}
+
+
+<div class="preorder-list">
+	{% if not preorderlist.items %}
+		<div class="tx-margin-top-large text-center">
+			<h6 class="highlight">{{ _("You have no pre-ordered books") }}</h6>
+			<h6 class="highlight subheader">
+				{{ _("You can pre-order books from our store before the official release date.") }}
+				{{ _("You can view and cancel your pre-orders here.") }}
+				{{ _("You will only be charged once the book has been released and sent to your library.") }}
+			</h6>
+		</div>
+	{% else %}
+		<h6 class="highlight">{{ ngettext("You have %d pre-ordered book", "You have %d pre-ordered books", preorderlist|length) % preorderlist|length }}</h6>
+
+		<div class="tx-list">
+			<ul class="tx-list-list tx-list-shadow small-block-grid-1 large-block-grid-1">
+			{% for item in preorderlist.notified_items %}
+				{% set doc = item.document %}
+				{% set oldest_notif = item.notifications[-1] if item.notifications else None %}
+
+				<li>
+					<div class="tx-list-item">
+						<div class="tx-list-item-image tx-margin-bottom-small">
+							{% atom docs:image(request, doc) %}
+						</div>
+
+						<div class="tx-list-item-details">
+							<div class="tx-header-group">
+								<h6 class="highlight">{% atom docs:title(doc, False, True, tracking) %}</h6>
+								<h6 class="subheader">{% atom docs:author(doc.authors) %}</h6>
+							</div>
+
+							<div class="tx-margin-top-tiny tx-margin-bottom-tiny">
+								<p class="tx-smaller">
+									{% if doc.is_preorder and doc.attributes.publication_date %}
+										<span>{{ _('Date of Publication') }}:&nbsp;</span>
+										<span>{{ doc.attributes.publication_date|nice_date }}</span>
+									{% endif %}
+								</p>
+							</div>
+
+							<h5>
+								{{ _("Pre-ordered for %s") % doc.price|currencyfmt }}
+
+								{% if oldest_notif and oldest_notif.price_down %}
+									<small>
+										<del>{{ oldest_notif.previous_price|currencyfmt }}</del>
+									</small>
+								{% endif %}
+							</h5>
+						</div>
+
+						<div class="tx-list-item-actions">
+							<form method="POST" action=".">
+								<button type="submit"
+									data-id="{{ doc.id }}"
+									data-title="{{ doc.attributes.title|default(doc.file_name, true) }}"
+									data-author="{{ doc.attributes.author|default(_('No author'), true) }}">
+									{{ _("Cancel Pre-order") }}
+								</button>
+							</form>
+						</div>
+					</div>
+				</li>
+			{% endfor %}
+			</ul>
+		</div>
+		{# cancel modal form #}
+		<div id="tx-cancel-modal" style="display:none;" class="tx-modal">
+			<h4>{{ _("Cancel Pre-order") }}</h4>
+			<form id="delete" action="." method="POST">
+				<p data-raw-text='{{ _("Do you really want to cancel your pre-order for \"%(title)s\" by \"%(author)s\"?") }}'</p>
+				<div class="row">
+					<div class="large-6 columns">
+						<input type="hidden" value="" name="doc_id" />
+						<button class="tx-button secondary expand" type="submit" value="1">{{ _("Cancel Pre-order") }}</button>
+					</div>
+					<div class="large-6 columns">
+						<a class="tx-button tx-close expand">{{ _("Cancel") }}</a>
+					</div>
+				</div>
+			</form>
+			<a class="tx-close tx-modal-close">&#215;</a>
+		</div>
+		<script type="text/javascript">
+		$(document).ready(function () {
+			$('.preorder-list').on('click', '.tx-list-item-actions button', function (evt) {
+				var btn = $(evt.target);
+				var modal = $('#tx-cancel-modal');
+				var modalText = modal.find('p');
+				modalText.text(modalText.data('raw-text')
+					.replace('%(title)s', btn.data('title'))
+					.replace('%(author)s', btn.data('author')))
+				modal.find('[name=doc_id]').val(btn.data('id'))
+				modal.foundation('reveal', 'open');
+				return false;
+			});
+		});
+		</script>
+	{% endif %}
+</div>
