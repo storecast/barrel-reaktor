@@ -7,24 +7,6 @@ from apps.site_conf.models import SiteConf
 from .forms import PayNowForm
 
 
-@atom('atoms/checkout/basket_empty.html')
-def basket_empty(reaktor_user, store_path, wishlist_path):
-    """Atom to render if basket is empty in the checkout plugin."""
-    if reaktor_user.is_authenticated():
-        is_authenticated = True
-    else:
-        is_authenticated = False
-
-    wishlist_path = reverse('user-wishlist')
-
-    return {
-        'is_authenticated': is_authenticated,
-        'wishlist_path': wishlist_path,
-        'store_path': store_path,
-        'wishlist_path': wishlist_path
-    }
-
-
 @atom('atoms/checkout/basket_list.html')
 def basket_list(request, basket, instance, voucher_form, store_path, csrf_token, already_purchased_docs):
     """Atom to render the basket section (1) in the checkout plugin."""
@@ -55,20 +37,6 @@ def voucher_form(instance, basket, form, csrf_token):
         'basket': basket,
         'form': form,
         'csrf_token': csrf_token,
-    }
-
-
-@atom('atoms/checkout/user_form.html')
-def user_form(request, reaktor_user, login_form, signup_form, signup_config, checkout_plugin, facebook):
-    """Atom to render the user login/signup section (2) in the checkout plugin."""
-    return {
-        'request': request,
-        'reaktor_user': reaktor_user,
-        'login_form': login_form,
-        'signup_form': signup_form,
-        'signup_config': signup_config,
-        'checkout_plugin': checkout_plugin,
-        'facebook': facebook,
     }
 
 
