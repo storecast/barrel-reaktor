@@ -5,7 +5,7 @@ from apps.reaktor_shop.wishlist_models import WishList
 from apps.reaktor_shop.wishlistentry_models import WishListEntry
 from django.contrib import messages
 from django.contrib.auth.decorators import login_required
-from django.http import HttpResponse
+from django.http import HttpResponse, Http404
 from django.utils.decorators import method_decorator
 from django.utils.translation import ugettext, ungettext
 from django.views.generic import TemplateView
@@ -67,6 +67,31 @@ def wishlist_remove(request):
         #ungettext('%(num)d book', '%(num)d books', num) % {'num': wishlist_length,}
 
     return HttpResponse(json.dumps(wishlist_update), content_type="application/json")
+
+
+class WishlistItemView(JinjaTemplateMixin, ContextTokenMixin, TemplateView):
+    template_name = 'atoms/documents/wishlist_button.html'
+    context_object_name = 'wishlist'
+
+    def get(self, request, doc_id=None, action=None, *args, **kwargs):
+        if doc_id is None:
+            raise Http404()
+        context = self.get_context_data(**kwargs)
+        if action and doc_id:
+            if action == 'remove':
+                WishListEntry.objects.remove(document_id=doc_id)
+            else:
+                WishListEntry.objects.create(document_id = doc_id)
+        context['wishlist'] = WishList.objects.get(token=context['token'])
+        context['doc_id'] = doc_id
+        context['is_ajax'] = request.is_ajax()
+        context['is_in_wishlist'] = doc_id in [e.document.id for e in context['wishlist'].entries]
+        context['clear_item_on_remove'] = 'wishlist' in request.META.get('HTTP_REFERER')
+        return self.render_to_response(context)
+
+    @method_decorator(login_required)
+    def dispatch(self, *args, **kwargs):
+        return super(WishlistItemView, self).dispatch(*args, **kwargs)
 
 
 class PreorderlistView(JinjaTemplateMixin, ContextTokenMixin, TemplateView):
