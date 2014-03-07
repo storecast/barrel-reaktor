@@ -224,6 +224,16 @@ class Basket(Store, RpcMixin):
         for item in self.giftcard_items:
             yield item.giftcard
 
+    @property
+    def is_regular(self):
+        """Return `True` if at least one document in the basket is regular (i.e. not a preorder)."""
+        return any(map(lambda d: not d.is_preorder, self.documents))
+
+    @property
+    def is_preorder(self):
+        """Return `True` if at least one document in the basket is a preorder."""
+        return any(map(lambda d: d.is_preorder, self.documents))
+
     def is_authorized_for(self, payment_method):
         """Check whether the basket is authorized for the given payment_method.
         """

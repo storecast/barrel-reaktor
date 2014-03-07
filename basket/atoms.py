@@ -103,9 +103,7 @@ def complete(reaktor_user, basket, has_billing_address, has_payment_data, paymen
     else:
         label = _("Complete Purchase")
         button_id = "pay-now"
-    # If this becomes a more involved logic, it should be abstracted
-    # by the model.
-    if all(map(lambda d: d.is_preorder, basket.documents)):
+    if not basket.is_regular:
         label = _('Complete Pre-order')
 
     try:
@@ -132,7 +130,6 @@ def your_purchase(request, basket, store_path, conversion_code, purchased_items)
     return {
         'request': request,
         'basket': basket,
-        'preorder': any(map(lambda d: d.is_preorder, basket.documents)),
         'library_path': reverse('user-library'),
         'library_page': Page.objects.on_site().published().get(reverse_id='my', publisher_is_draft=False),
         'store_path': store_path,
