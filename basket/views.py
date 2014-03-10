@@ -80,8 +80,9 @@ def update_item(request):
     if document:
         response["new_item"] = {}
         response["new_item"]["title"] = document.attributes.title
-        response["new_item"]["subtitle"] = document.attributes.subtitle if hasattr(document.attributes, 'subtitle') else '' # subtitle is not always returned by reaktor
-        response["new_item"]["author"] = document.attributes.author
+        # subtitle and author are not always returned by reaktor
+        response["new_item"]["subtitle"] = getattr(document.attributes, 'subtitle', '')
+        response["new_item"]["author"] = getattr(document.attributes, 'author', '')
         response["new_item"]["document_id"] = document.id
         response["new_item"]["price"] = currencyfmt(float(document.price.amount), document.price.currency.code)
         response["new_item"]["cover_url"] = document.attributes.normal_cover_url
