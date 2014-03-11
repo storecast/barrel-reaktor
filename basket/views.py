@@ -8,7 +8,6 @@ from apps.compact_url import reverse
 from apps.reaktor_auth.decorators import login_required_on_render
 from . import get_basket_from_request, update_basket_for_request
 
-
 HTML = """
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
 <html xmlns="http://www.w3.org/1999/xhtml" xml:lang="{{ LANGUAGE_CODE|e }}" lang="{{ LANGUAGE_CODE|e }}">
@@ -82,7 +81,7 @@ def update_item(request):
         response["new_item"]["title"] = document.attributes.title
         # subtitle and author are not always returned by reaktor
         response["new_item"]["subtitle"] = getattr(document.attributes, 'subtitle', '')
-        response["new_item"]["author"] = getattr(document.attributes, 'author', '')
+        response["new_item"]["author"] = getattr(document.authors, 'data', '')
         response["new_item"]["document_id"] = document.id
         response["new_item"]["price"] = currencyfmt(float(document.price.amount), document.price.currency.code)
         response["new_item"]["cover_url"] = document.attributes.normal_cover_url
