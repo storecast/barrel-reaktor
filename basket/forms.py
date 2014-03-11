@@ -19,7 +19,7 @@ from apps.reaktor_users import get_current_reaktor_user
 from apps.reaktor_users.mapper import SETTINGS_FROM_API, SETTINGS_TO_API
 from apps.reaktor_users.models import ReaktorUser
 
-from apps.reaktor_barrel.basket.models import VoucherItem
+from .models import VoucherItem
 
 
 ##############################################################################
@@ -404,3 +404,48 @@ class VoucherForm(ReaktorForm):
 
     def clean_item_type(self):
         return self.data.get('item_type')
+
+
+class CustomErrorForm(forms.Form):
+    """Form that uses `CustomErrorList` to print the errors.
+    Also sets the `error` class on fields input.
+    """
+    def __init__(self, *args, **kwargs):
+        kwargs.update({'error_class': CustomErrorList})
+        super(CustomErrorForm, self).__init__(*args, **kwargs)
+
+    def is_valid(self):
+        # overriding this method to style the fields properly.
+        valid = super(CustomErrorForm, self).is_valid()
+        for field in self:
+            if field.errors:
+                field.field.widget.attrs.update({'class': field.css_classes('error')})
+        return valid
+
+
+class CardCodeForm(CustomErrorForm):
+    """Form that handles redeeming of the Ebook voucher card."""
+
+    response_codes = {
+        'VOUCHER_APPLIED': True,
+        'ILLEGAL_VOUCHER_CODE': _("This voucher is invalid. Please verify that you typed in the code correctly."),
+        'VOUCHER_ALREADY_REDEEMED': _("This voucher has already been used."),
+        'INVALID_VOUCHER_STATE': _("This card or product is either deactive or suspended."), #TODO: (Iurii Kudriavtsev): message needs UX confirmation
+    }
+
+    basket_id = forms.CharField(widget=forms.HiddenInput)
+    voucher_code = forms.CharField(label=_("Voucher Code"), widget=forms.TextInput(attrs={'placeholder': _("Enter 8 digit voucher card code")}))
+
+    def clean(self):
+        cleaned_data = super(CardCodeForm, self).clean()
+        basket_id = cleaned_data.get('basket_id')
+        voucher_code = cleaned_data.get('voucher_code')
+        if basket_id and voucher_code:
+            token = get_current_reaktor_user().token
+            result_code = VoucherItem.apply(token, voucher_code, basket_id).code
+            msg = self.response_codes.get(result_code, _('An unknown error has occurred.'))
+            # reaktor returned an error result code
+            if msg is not True:
+                self._errors['voucher_code'] = self.error_class([msg])
+                del cleaned_data['voucher_code']
+        return cleaned_data
