@@ -78,6 +78,10 @@ def update_basket_for_request(request, basket):
                 try:
                     DocumentItem.add_to_basket(token, basket.id, item_id)
                 except ReaktorApiError as err:
+                    # In case of ajax, adding to messages doesn't make so much sense.
+                    # Reraise and let the view handle it.
+                    if request.is_ajax():
+                        raise err
                     messages.add_message(request, messages.ERROR, err.message)
                 else:
                     document = Document.get_by_id(token, item_id)

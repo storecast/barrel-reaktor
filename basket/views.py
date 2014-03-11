@@ -7,6 +7,7 @@ from apps.jinja_lib.ext.djangojinja2 import get_env
 from apps.compact_url import reverse
 from apps.reaktor_auth.decorators import login_required_on_render
 from . import get_basket_from_request, update_basket_for_request
+from libs.own.holon.reaktor import ReaktorApiError
 
 HTML = """
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
@@ -70,7 +71,10 @@ def update_item(request):
     Works with new API wrapper.
     """
     basket = get_basket_from_request(request)
-    basket, document, updated = update_basket_for_request(request, basket)
+    try:
+        basket, document, updated = update_basket_for_request(request, basket)
+    except ReaktorApiError as e:
+        return HttpResponse(e.message, content_type="application/json", status=500)
     response = {'updated': updated, 'action': request.POST.get('item_action')}
     response['length'] = len(basket.items)
     response['total'] = currencyfmt(float(basket.total.amount), basket.total.currency.code)
