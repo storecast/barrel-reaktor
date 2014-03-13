@@ -424,20 +424,27 @@ class CustomErrorForm(forms.Form):
 
 
 class CardCodeForm(CustomErrorForm):
-    """Form that handles redeeming of the Ebook voucher card."""
+    """Base form class for applying and removing Ebook voucher to / from basket."""
 
     response_codes = {
         'VOUCHER_APPLIED': True,
+        'VOUCHER_REMOVED': True,
         'ILLEGAL_VOUCHER_CODE': _("This voucher is invalid. Please verify that you typed in the code correctly."),
+        'VOUCHER_BELONGS_TO_DIFFERENT_USER': _('This voucher is invalid. It belongs to another user already.'),
         'VOUCHER_ALREADY_REDEEMED': _("This voucher has already been used."),
         'INVALID_VOUCHER_STATE': _("This card or product is either deactive or suspended."), #TODO: (Iurii Kudriavtsev): message needs UX confirmation
     }
 
     basket_id = forms.CharField(widget=forms.HiddenInput)
+
+
+class CardCodeAddForm(CardCodeForm):
+    """Form that handles applying of Ebook voucher card to basket."""
+
     voucher_code = forms.CharField(label=_("Voucher Code"), widget=forms.TextInput(attrs={'placeholder': _("Enter 8 digit voucher card code")}))
 
     def clean(self):
-        cleaned_data = super(CardCodeForm, self).clean()
+        cleaned_data = super(CardCodeAddForm, self).clean()
         basket_id = cleaned_data.get('basket_id')
         voucher_code = cleaned_data.get('voucher_code')
         if basket_id and voucher_code:
@@ -449,3 +456,21 @@ class CardCodeForm(CustomErrorForm):
                 self._errors['voucher_code'] = self.error_class([msg])
                 del cleaned_data['voucher_code']
         return cleaned_data
+
+
+class CardCodeRemoveForm(CardCodeForm):
+    """Form that handles removing of Ebook voucher card from basket."""
+
+    voucher_code = forms.CharField(widget=forms.HiddenInput)
+
+    def clean(self):
+        cleaned_data = super(CardCodeRemoveForm, self).clean()
+        basket_id = cleaned_data.get('basket_id')
+        voucher_code = cleaned_data.get('voucher_code')
+        if basket_id:
+            token = get_current_reaktor_user().token
+            result_code = VoucherItem.remove(token, voucher_code, basket_id).code
+            msg = self.response_codes.get(result_code, _('An unknown error has occurred.'))
+            # reaktor returned an error result code
+            if msg is not True:
+                raise forms.ValidationError(msg)
