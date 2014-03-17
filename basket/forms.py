@@ -19,7 +19,7 @@ from apps.reaktor_users import get_current_reaktor_user
 from apps.reaktor_users.mapper import SETTINGS_FROM_API, SETTINGS_TO_API
 from apps.reaktor_users.models import ReaktorUser
 
-from .models import VoucherItem
+from .models import VoucherItem, Basket
 
 
 ##############################################################################
@@ -432,7 +432,7 @@ class CardCodeForm(CustomErrorForm):
         'ILLEGAL_VOUCHER_CODE': _("This voucher is invalid. Please verify that you typed in the code correctly."),
         'VOUCHER_BELONGS_TO_DIFFERENT_USER': _('This voucher is invalid. It belongs to another user already.'),
         'VOUCHER_ALREADY_REDEEMED': _("This voucher has already been used."),
-        'INVALID_VOUCHER_STATE': _("This card or product is either deactive or suspended."), #TODO: (Iurii Kudriavtsev): message needs UX confirmation
+        'INVALID_VOUCHER_STATE': _("This card or product is either deactive or suspended."), #TODO (Iurii Kudriavtsev): message needs UX confirmation
     }
 
     basket_id = forms.CharField(widget=forms.HiddenInput)
@@ -474,3 +474,42 @@ class CardCodeRemoveForm(CardCodeForm):
             # reaktor returned an error result code
             if msg is not True:
                 raise forms.ValidationError(msg)
+        return cleaned_data
+
+
+class CardCodeRedeemForm(CardCodeForm):
+    """Form that handles redeeming of Ebook voucher card."""
+
+    response_codes = {
+        'SUCCESS': True,
+        'FAILURE_FULFILLMENT_INDIVIDUAL_POSITION': _("The checkout failed because one basket position could not be fulfilled."),
+        'FAILURE_INTERNAL_ERROR': _("The checkout failed with an internal error."),
+        'FAILURE_PAYMENT_AUTHORIZATION_TIMED_OUT': _("The checkout failed because the payment provider could not be reached."),
+        'FAILURE_PAYMENT_INFORMATION_INVALID': _("The checkout failed because the payment information are insufficient or invalid."),
+        'FAILURE_PAYMENT_NOT_POSSIBLE': _("The checkout failed, because the payment is not possible."),
+        '_GENERIC': _("Your payment could not be fulfilled. Please contact our support."),
+    }
+
+    def __init__(self, request, *args, **kwargs):
+        super(CardCodeRedeemForm, self).__init__(*args, **kwargs)
+        self.request = request
+
+    def clean(self):
+        cleaned_data = super(CardCodeRedeemForm, self).clean()
+        basket_id = cleaned_data.get('basket_id')
+        if basket_id:
+            token = self.request.reaktor_user.token
+            if 'referral' in self.request.session:
+                checkout_props = {'externalTransactionID': request.session['referral']}
+            else:
+                checkout_props = {}
+            result = Basket.checkout(token, basket_id, None, checkout_props)
+            self._basket = result.basket
+            msg = self.response_codes.get(result.code, _('An unknown error has occurred.'))
+            # reaktor returned an error result code
+            if msg is not True:
+                raise forms.ValidationError(msg)
+        return cleaned_data
+
+    def get_basket(self):
+        return getattr(self, '_basket', None)
