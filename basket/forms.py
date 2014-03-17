@@ -437,6 +437,13 @@ class CardCodeForm(CustomErrorForm):
 
     basket_id = forms.CharField(widget=forms.HiddenInput)
 
+    def __init__(self, request, *args, **kwargs):
+        super(CardCodeForm, self).__init__(*args, **kwargs)
+        self.request = request
+
+    def get_basket(self):
+        return getattr(self, '_basket', None)
+
 
 class CardCodeAddForm(CardCodeForm):
     """Form that handles applying of Ebook voucher card to basket."""
@@ -448,13 +455,16 @@ class CardCodeAddForm(CardCodeForm):
         basket_id = cleaned_data.get('basket_id')
         voucher_code = cleaned_data.get('voucher_code')
         if basket_id and voucher_code:
-            token = get_current_reaktor_user().token
-            result_code = VoucherItem.apply(token, voucher_code, basket_id).code
-            msg = self.response_codes.get(result_code, _('An unknown error has occurred.'))
+            token = self.request.reaktor_user.token
+            result = VoucherItem.apply(token, voucher_code, basket_id)
             # reaktor returned an error result code
+            msg = self.response_codes.get(result.code, _('An unknown error has occurred.'))
             if msg is not True:
                 self._errors['voucher_code'] = self.error_class([msg])
                 del cleaned_data['voucher_code']
+            # reaktor returned basket in result in case of no errors
+            else:
+                self._basket = result.basket
         return cleaned_data
 
 
@@ -468,12 +478,17 @@ class CardCodeRemoveForm(CardCodeForm):
         basket_id = cleaned_data.get('basket_id')
         voucher_code = cleaned_data.get('voucher_code')
         if basket_id:
-            token = get_current_reaktor_user().token
-            result_code = VoucherItem.remove(token, voucher_code, basket_id).code
-            msg = self.response_codes.get(result_code, _('An unknown error has occurred.'))
+            token = self.request.reaktor_user.token
+            result = VoucherItem.remove(token, voucher_code, basket_id)
+            msg = self.response_codes.get(result.code, _('An unknown error has occurred.'))
             # reaktor returned an error result code
             if msg is not True:
                 raise forms.ValidationError(msg)
+            # remove the document from the basket in case of no errors
+            for item in result.basket.document_items:
+                item.remove_from_basket(self.request.reaktor_user.token, result.basket.id, item.document.id)
+            # since `WSDocMgmt.changeDocumentBasketPosition` returns void, we need to do a separate call to get the updated basket
+            self._basket = Basket.get_by_id(token, result.basket.id)
         return cleaned_data
 
 
@@ -490,17 +505,13 @@ class CardCodeRedeemForm(CardCodeForm):
         '_GENERIC': _("Your payment could not be fulfilled. Please contact our support."),
     }
 
-    def __init__(self, request, *args, **kwargs):
-        super(CardCodeRedeemForm, self).__init__(*args, **kwargs)
-        self.request = request
-
     def clean(self):
         cleaned_data = super(CardCodeRedeemForm, self).clean()
         basket_id = cleaned_data.get('basket_id')
         if basket_id:
             token = self.request.reaktor_user.token
             if 'referral' in self.request.session:
-                checkout_props = {'externalTransactionID': request.session['referral']}
+                checkout_props = {'externalTransactionID': self.request.session['referral']}
             else:
                 checkout_props = {}
             result = Basket.checkout(token, basket_id, None, checkout_props)
@@ -510,6 +521,3 @@ class CardCodeRedeemForm(CardCodeForm):
             if msg is not True:
                 raise forms.ValidationError(msg)
         return cleaned_data
-
-    def get_basket(self):
-        return getattr(self, '_basket', None)
