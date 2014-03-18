@@ -265,6 +265,10 @@ class Basket(Store, RpcMixin):
         return cls.signature(method='getFreeBasket', args=[token, marker])
 
     @classmethod
+    def get_validation(cls, token, marker=None):
+        return cls.signature(method='getValidationBasket', args=[token, marker])
+
+    @classmethod
     def checkout(cls, token, basket_id, method_preference, checkout_props):
         return cls.signature(method='checkoutBasket', data_converter=CheckoutResult, args=[token, basket_id, method_preference, checkout_props], deprecated='checkoutBasketAsynchronously')
 
