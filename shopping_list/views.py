@@ -1,5 +1,5 @@
 from apps.jinja_lib.views import JinjaTemplateMixin
-from apps.reaktor_auth.views import ContextTokenMixin
+from apps.reaktor_auth.utils import ContextTokenMixin
 from apps.reaktor_barrel.shopping_list.models import Preorderlist, PreorderlistItem
 from apps.reaktor_shop.wishlist_models import WishList
 from apps.reaktor_shop.wishlistentry_models import WishListEntry
