@@ -107,6 +107,10 @@ class Document(Store, RpcMixin):
     @classmethod
     def get_by_isbn(cls, token, isbn):
         """Returns a document by isbn, using search API endpoint since fetching doc by isbn requires extra rights."""
-        converter = lambda d: Document(d['results'][0]['searchResult'])
+        def converter(data):
+            if 'results' in data:
+                return Document(data['results'][0]['searchResult'])
+            else:
+                return None
         args = [token, 'isbn:%s' % isbn, None, 0, 1, None, False, None, None, {'resultType': 'Object'}]
         return cls.signature(interface="WSSearchDocument", method='searchDocuments', data_converter=converter, args=args)
