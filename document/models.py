@@ -103,3 +103,10 @@ class Document(Store, RpcMixin):
     def get_user_doc_id(cls, token, doc_id):
         """Returns user document id for the catalog document id if any."""
         return cls.signature(method='getUserDocumentID', data_converter=lambda d: d, args=[token, doc_id])
+
+    @classmethod
+    def get_by_isbn(cls, token, isbn):
+        """Returns a document by isbn, using search API endpoint since fetching doc by isbn requires extra rights."""
+        converter = lambda d: Document(d['results'][0]['searchResult'])
+        args = [token, 'isbn:%s' % isbn, None, 0, 1, None, False, None, None, {'resultType': 'Object'}]
+        return cls.signature(interface="WSSearchDocument", method='searchDocuments', data_converter=converter, args=args)
