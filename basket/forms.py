@@ -429,10 +429,10 @@ class CardCodeForm(CustomErrorForm):
     response_codes = {
         'VOUCHER_APPLIED': True,
         'VOUCHER_REMOVED': True,
-        'ILLEGAL_VOUCHER_CODE': _("This voucher is invalid. Please verify that you typed in the code correctly."),
+        'ILLEGAL_VOUCHER_CODE': _("Your code should have at least 8 characters and may contain both numbers and letters."),
         'VOUCHER_BELONGS_TO_DIFFERENT_USER': _('This voucher is invalid. It belongs to another user already.'),
-        'VOUCHER_ALREADY_REDEEMED': _("This voucher has already been used."),
-        'INVALID_VOUCHER_STATE': _("This card or product is either deactive or suspended."), #TODO (Iurii Kudriavtsev): message needs UX confirmation
+        'VOUCHER_ALREADY_REDEEMED': _("This code was activated already. Please check your entry and try again."),
+        'INVALID_VOUCHER_STATE': _("Your code can't be activated. Please contact us to resolve this issue."),
     }
 
     basket_id = forms.CharField(widget=forms.HiddenInput)
@@ -448,7 +448,17 @@ class CardCodeForm(CustomErrorForm):
 class CardCodeAddForm(CardCodeForm):
     """Form that handles applying of Ebook voucher card to basket."""
 
-    voucher_code = forms.CharField(label=_("Voucher Code"), widget=forms.TextInput(attrs={'placeholder': _("Enter 8 digit voucher card code")}))
+    voucher_code = forms.CharField(
+        label=_("eBook code"),
+        widget=forms.TextInput(attrs={'placeholder': _("e.g. 12345ABC")}),
+        min_length=8,
+        max_length=8,
+        error_messages={
+            'required': _("Your code should have at least 8 characters."),
+            'min_length': _("Your code should have at least 8 characters."),
+            'max_length': _("Your code should have 8 characters."),
+        }
+    )
 
     def clean(self):
         cleaned_data = super(CardCodeAddForm, self).clean()
@@ -458,7 +468,7 @@ class CardCodeAddForm(CardCodeForm):
             token = self.request.reaktor_user.token
             result = VoucherItem.apply(token, voucher_code, basket_id)
             # reaktor returned an error result code
-            msg = self.response_codes.get(result.code, _('An unknown error has occurred.'))
+            msg = self.response_codes.get(result.code, _("Your code can't be activated. Please contact us to resolve this issue."))
             if msg is not True:
                 self._errors['voucher_code'] = self.error_class([msg])
                 del cleaned_data['voucher_code']
@@ -480,7 +490,7 @@ class CardCodeRemoveForm(CardCodeForm):
         if basket_id:
             token = self.request.reaktor_user.token
             result = VoucherItem.remove(token, voucher_code, basket_id)
-            msg = self.response_codes.get(result.code, _('An unknown error has occurred.'))
+            msg = self.response_codes.get(result.code, _("Your code can't be activated. Please contact us to resolve this issue."))
             # reaktor returned an error result code
             if msg is not True:
                 raise forms.ValidationError(msg)
@@ -502,7 +512,6 @@ class CardCodeRedeemForm(CardCodeForm):
         'FAILURE_PAYMENT_AUTHORIZATION_TIMED_OUT': _("The checkout failed because the payment provider could not be reached."),
         'FAILURE_PAYMENT_INFORMATION_INVALID': _("The checkout failed because the payment information are insufficient or invalid."),
         'FAILURE_PAYMENT_NOT_POSSIBLE': _("The checkout failed, because the payment is not possible."),
-        '_GENERIC': _("Your payment could not be fulfilled. Please contact our support."),
     }
 
     def clean(self):
@@ -516,7 +525,7 @@ class CardCodeRedeemForm(CardCodeForm):
                 checkout_props = {}
             result = Basket.checkout(token, basket_id, None, checkout_props)
             self._basket = result.basket
-            msg = self.response_codes.get(result.code, _('An unknown error has occurred.'))
+            msg = self.response_codes.get(result.code, _("Your code can't be activated. Please contact us to resolve this issue."))
             # reaktor returned an error result code
             if msg is not True:
                 raise forms.ValidationError(msg)
