@@ -431,7 +431,7 @@ class CardCodeForm(CustomErrorForm):
         'VOUCHER_REMOVED': True,
         'ILLEGAL_VOUCHER_CODE': _("Your code should have at least 8 characters and may contain both numbers and letters."),
         'VOUCHER_BELONGS_TO_DIFFERENT_USER': _('This voucher is invalid. It belongs to another user already.'),
-        'VOUCHER_ALREADY_REDEEMED': _("This code was activated already. Please check your entry and try again."),
+        'VOUCHER_ALREADY_REDEEMED': _("This code has already been activated. Please recheck your entry and try again."),
         'INVALID_VOUCHER_STATE': _("Your code can't be activated. Please contact us to resolve this issue."),
     }
 
