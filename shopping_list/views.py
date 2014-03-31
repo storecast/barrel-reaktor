@@ -86,7 +86,7 @@ class WishlistItemView(JinjaTemplateMixin, ContextTokenMixin, TemplateView):
         context['doc_id'] = doc_id
         context['is_ajax'] = request.is_ajax()
         context['is_in_wishlist'] = doc_id in [e.document.id for e in context['wishlist'].entries]
-        context['clear_item_on_remove'] = 'wishlist' in request.META.get('HTTP_REFERER')
+        context['clear_item_on_remove'] = 'wishlist' in request.META.get('HTTP_REFERER', '')
         return self.render_to_response(context)
 
     @method_decorator(login_required)
