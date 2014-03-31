@@ -31,7 +31,7 @@ class Document(Store, RpcMixin):
         language = Field(target='language')
         pages = IntField(target='number_of_pages')
         price = FloatField(target='price')
-        publication_date = DateField(target='publication_date')
+        publication_date = DateField(target='publication_date', default='')
         publication_status = DateField(target='publication_status')
         publisher = Field(target='publisher')
         size = IntField(target='size')
