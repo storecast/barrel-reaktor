@@ -265,7 +265,7 @@ class Basket(Store, RpcMixin):
         return cls.signature(method='getFreeBasket', args=[token, marker])
 
     @classmethod
-    def get_validation(cls, token, marker=None):
+    def get_validation(cls, token, marker):
         return cls.signature(method='getValidationBasket', args=[token, marker])
 
     @classmethod
