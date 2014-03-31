@@ -74,6 +74,8 @@ class WishlistItemView(JinjaTemplateMixin, ContextTokenMixin, TemplateView):
     context_object_name = 'wishlist'
 
     def get(self, request, doc_id=None, action=None, *args, **kwargs):
+        if not request.reaktor_user.is_authenticated():
+            return HttpResponse(status=401)
         if doc_id is None:
             raise Http404()
         context = self.get_context_data(**kwargs)
@@ -88,10 +90,6 @@ class WishlistItemView(JinjaTemplateMixin, ContextTokenMixin, TemplateView):
         context['is_in_wishlist'] = doc_id in [e.document.id for e in context['wishlist'].entries]
         context['clear_item_on_remove'] = 'wishlist' in request.META.get('HTTP_REFERER', '')
         return self.render_to_response(context)
-
-    @method_decorator(login_required)
-    def dispatch(self, *args, **kwargs):
-        return super(WishlistItemView, self).dispatch(*args, **kwargs)
 
 
 class PreorderlistView(JinjaTemplateMixin, ContextTokenMixin, TemplateView):
