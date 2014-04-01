@@ -282,9 +282,13 @@ class CheckoutResult(Store):
     class ItemProperty(Store):
         document_id = Field(target='com.bookpac.server.shop.fulfillment.document.newid')
 
+    class Item(Store):
+        user_document_id = Field(target='userDocumentID')
+
     basket = EmbeddedStoreField(target='checkedOutBasket', store_class=Basket)
     code = Field(target='resultCode')
     failed_item_index = IntField(target='failingPosition')
     item_properties = EmbeddedStoreField(target='positionResultProperties', store_class=ItemProperty, is_array=True)
+    items = EmbeddedStoreField(target='positionResults', store_class=Item, is_array=True)
     receipt_id = Field(target='receiptIdentifier')
     transaction_id = Field(target='transactionID')
