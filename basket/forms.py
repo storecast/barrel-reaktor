@@ -523,7 +523,7 @@ class CardCodeRedeemForm(CardCodeForm):
                 checkout_props = {'externalTransactionID': self.request.session['referral']}
             else:
                 checkout_props = {}
-            result = Basket.checkout(token, basket_id, None, checkout_props)
+            result = Basket.checkout(token, basket_id, checkout_props)
             self._basket = result.basket
             msg = self.response_codes.get(result.code, _("Your code can't be activated. Please contact us to resolve this issue."))
             # reaktor returned an error result code
