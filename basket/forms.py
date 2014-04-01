@@ -450,7 +450,7 @@ class CardCodeAddForm(CardCodeForm):
 
     voucher_code = forms.CharField(
         label=_("eBook code"),
-        widget=forms.TextInput(attrs={'placeholder': _("e.g. 12345ABC")}),
+        widget=forms.TextInput(attrs={'placeholder': _("e.g. 12345abc")}),
         min_length=8,
         max_length=8,
         error_messages={
