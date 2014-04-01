@@ -95,6 +95,14 @@ class Document(Store, RpcMixin):
     def is_preorder(self):
         return self.catalog_state == 'PRE_RELEASE'
 
+    @property
+    def is_pending(self):
+        return self.user_state == 'FULFILLMENT_PENDING'
+
+    @property
+    def is_upload(self):
+        return self.user_state == 'UPLOADED_BY_USER'
+
     @classmethod
     def get_by_id(cls, token, doc_id):
         """Returns `Document` instance for the given id."""
