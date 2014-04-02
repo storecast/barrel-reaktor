@@ -1,4 +1,4 @@
-from apps.barrel import Store, DateField, EmbeddedStoreField, Field, FloatField, LongIntField
+from apps.barrel import Store, DateField, EmbeddedStoreField, Field, FloatField, LongIntField, BooleanField
 from apps.barrel.rpc import RpcMixin
 from apps.reaktor_barrel.document.models import Document
 from money import Money
@@ -75,6 +75,8 @@ class WishlistItem(ShoppingListItem):
 
 
 class PreorderlistItem(ShoppingListItem):
+    pre_paid = BooleanField(target='prePaid')
+
     @classmethod
     def add_to_list(cls, token, doc_id):
         """Adding an item to the preorder list is done by buying a document not yet released.
