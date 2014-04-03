@@ -3,6 +3,9 @@ from apps.barrel.rpc import RpcMixin
 from money import Money
 
 
+COMMERCIAL_LICENSES = ['commercial-retailer-default', 'commercial-enduser-default', 'cc-publicdomain']
+
+
 class Document(Store, RpcMixin):
     interface = 'WSDocMgmt'
 
@@ -11,7 +14,7 @@ class Document(Store, RpcMixin):
         last_name = Field(target='lastName')
 
     class Attributes(Store):
-        author = Field(target='author')
+        author = Field(target='author', default='')
         as_epub = BooleanField(target='available_as_epub') # should be deprecated soon
         as_pdf = BooleanField(target='available_as_pdf') # should be deprecated soon
         as_watermark = BooleanField(target='available_as_watermark') # should be deprecated soon
@@ -37,7 +40,7 @@ class Document(Store, RpcMixin):
         size = IntField(target='size')
         subtitle = Field(target='subtitle')
         tax_group = Field(target='tax_group')
-        title = Field(target='title')
+        title = Field(target='title', default='')
         year = IntField(target='year')
         large_cover_url = Field(target='cover_image_url_large')
         normal_cover_url = Field(target='cover_image_url_normal')
@@ -68,6 +71,7 @@ class Document(Store, RpcMixin):
     creation_date = DateField(target='creationTime')
     creator = Field(target='creator')
     drm_type = Field(target='drmType')
+    file_name = Field(target='fileName')
     format = Field(target='format')
     has_thumbnail = BooleanField(target='hasThumbnail')
     in_public_list = BooleanField(target='inPublicList')
@@ -82,6 +86,10 @@ class Document(Store, RpcMixin):
     version_access_type = Field(target='versionAccessType')
     version_size = IntField(target='versionSize')
     votes = IntField(target='numberOfVotes')
+
+    @property
+    def is_commercial(self):
+        return any([l.key in COMMERCIAL_LICENSES for l in self.licenses])
 
     @property
     def price(self):
@@ -109,6 +117,11 @@ class Document(Store, RpcMixin):
         return cls.signature(method='getDocument', args=[token, doc_id])
 
     @classmethod
+    def get_by_ids(cls, token, doc_ids):
+        """Returns `Document` instance for the given ids."""
+        return cls.signature(method='getDocuments', args=[token, doc_ids])
+
+    @classmethod
     def get_user_doc_id(cls, token, doc_id):
         """Returns user document id for the catalog document id if any."""
         return cls.signature(method='getUserDocumentID', data_converter=lambda d: d, args=[token, doc_id])
@@ -123,3 +136,7 @@ class Document(Store, RpcMixin):
                 return None
         args = [token, 'isbn:%s' % isbn, None, 0, 1, None, False, None, None, {'resultType': 'Object'}]
         return cls.signature(interface="WSSearchDocument", method='searchDocuments', data_converter=converter, args=args)
+
+    @classmethod
+    def change_attributes(cls, token, doc_ids, attributes):
+        return cls.signature(method='changeDocumentAttributes', args=[token, doc_ids, attributes])
