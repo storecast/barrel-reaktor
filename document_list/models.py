@@ -85,6 +85,13 @@ class List(Store, RpcMixin):
     def remove_documents(cls, token, list_id, document_ids):
         return cls.signature(method='removeDocumentsFromList', args=[token, list_id, document_ids])
 
+    @classmethod
+    def empty(cls, token, list_id):
+        # `keepDocumentsInOtherLists` is always True, since reaktor does not support False (cfr. api doc).
+        # Note that since moving a document to trash removes other labels, the expected result
+        # is still reached.
+        return cls.signature(interface='WSDocMgmt', method='removeDocumentsInList', args=[token, list_id, True])
+
     @property
     def is_inbox(self):
         return self.name.startswith('INBOX-')
