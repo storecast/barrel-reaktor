@@ -71,7 +71,7 @@ class Document(Store, RpcMixin):
     creation_date = DateField(target='creationTime')
     creator = Field(target='creator')
     drm_type = Field(target='drmType')
-    file_name = Field(target='fileName')
+    file_name = Field(target='fileName', default='')
     format = Field(target='format')
     has_thumbnail = BooleanField(target='hasThumbnail')
     in_public_list = BooleanField(target='inPublicList')
