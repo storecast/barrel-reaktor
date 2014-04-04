@@ -434,6 +434,7 @@ class CardCodeForm(CustomErrorForm):
         'VOUCHER_ALREADY_REDEEMED': _("This code has already been activated. Please recheck your entry and try again."),
         'INVALID_VOUCHER_STATE': _("Your code can't be activated. Please contact us to resolve this issue."),
     }
+    setting_name = 'preview_voucher_code'
 
     basket_id = forms.CharField(widget=forms.HiddenInput)
 
@@ -467,14 +468,21 @@ class CardCodeAddForm(CardCodeForm):
         if basket_id and voucher_code:
             token = self.request.reaktor_user.token
             result = VoucherItem.apply(token, voucher_code, basket_id)
-            # reaktor returned an error result code
             msg = self.response_codes.get(result.code, _("Your code can't be activated. Please contact us to resolve this issue."))
+            # reaktor returned an error result code
             if msg is not True:
                 self._errors['voucher_code'] = self.error_class([msg])
                 del cleaned_data['voucher_code']
             # reaktor returned basket in result in case of no errors
             else:
                 self._basket = result.basket
+                # save the voucher code either to user settings
+                if self.request.reaktor_user.is_authenticated():
+                    self.request.reaktor_user.settings['skins.' + self.setting_name] = voucher_code
+                    ReaktorUser.mapper.change_settings_from_user_obj(token, self.request.reaktor_user)
+                # or to session
+                elif self.setting_name not in self.request.session:
+                    self.request.session[self.setting_name] = voucher_code
         return cleaned_data
 
 
@@ -499,6 +507,13 @@ class CardCodeRemoveForm(CardCodeForm):
                 item.remove_from_basket(self.request.reaktor_user.token, result.basket.id, item.document.id)
             # since `WSDocMgmt.changeDocumentBasketPosition` returns void, we need to do a separate call to get the updated basket
             self._basket = Basket.get_by_id(token, result.basket.id)
+            # remove the voucher code either from user settings
+            if self.request.reaktor_user.is_authenticated():
+                self.request.reaktor_user.settings['skins.' + self.setting_name] = ''
+                ReaktorUser.mapper.change_settings_from_user_obj(token, self.request.reaktor_user)
+            # or from session
+            else:
+                del self.request.session[self.setting_name]
         return cleaned_data
 
 
