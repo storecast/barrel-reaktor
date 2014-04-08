@@ -1,5 +1,6 @@
 # -*- coding: utf-8 -*-
 import re
+from collections import defaultdict
 from babel import Locale
 from django import forms
 from django.conf import settings
@@ -18,6 +19,7 @@ from apps.reaktor.mapper import WST_MAP_EMPTY_VALUE_VARIANTS
 from apps.reaktor_users import get_current_reaktor_user
 from apps.reaktor_users.mapper import SETTINGS_FROM_API, SETTINGS_TO_API
 from apps.reaktor_users.models import ReaktorUser
+from libs.own.holon import ReaktorApiError
 
 from .models import VoucherItem, Basket
 
@@ -426,13 +428,12 @@ class CustomErrorForm(forms.Form):
 class CardCodeForm(CustomErrorForm):
     """Base form class for applying and removing Ebook voucher to / from basket."""
 
-    response_codes = {
+    _response_codes = {
         'VOUCHER_APPLIED': True,
         'VOUCHER_REMOVED': True,
         'ILLEGAL_VOUCHER_CODE': _("Your code should have at least 8 characters and may contain both numbers and letters."),
         'VOUCHER_BELONGS_TO_DIFFERENT_USER': _('This voucher is invalid. It belongs to another user already.'),
         'VOUCHER_ALREADY_REDEEMED': _("This code has already been activated. Please recheck your entry and try again."),
-        'INVALID_VOUCHER_STATE': _("Your code can't be activated. Please contact us to resolve this issue."),
     }
 
     basket_id = forms.CharField(widget=forms.HiddenInput)
@@ -440,6 +441,7 @@ class CardCodeForm(CustomErrorForm):
     def __init__(self, request, *args, **kwargs):
         super(CardCodeForm, self).__init__(*args, **kwargs)
         self.request = request
+        self.response_codes = defaultdict(lambda: _("Your code can't be activated. Please contact us to resolve this issue."), self._response_codes)
 
     def get_basket(self):
         return getattr(self, '_basket', None)
@@ -466,9 +468,13 @@ class CardCodeAddForm(CardCodeForm):
         voucher_code = cleaned_data.get('voucher_code')
         if basket_id and voucher_code:
             token = self.request.reaktor_user.token
-            result = VoucherItem.apply(token, voucher_code, basket_id)
+            try:
+                result = VoucherItem.apply(token, voucher_code, basket_id)
+            except ReaktorApiError:
+                msg = self.response_codes.default_factory()
+            else:
+                msg = self.response_codes[result.code]
             # reaktor returned an error result code
-            msg = self.response_codes.get(result.code, _("Your code can't be activated. Please contact us to resolve this issue."))
             if msg is not True:
                 self._errors['voucher_code'] = self.error_class([msg])
                 del cleaned_data['voucher_code']
@@ -489,8 +495,12 @@ class CardCodeRemoveForm(CardCodeForm):
         voucher_code = cleaned_data.get('voucher_code')
         if basket_id:
             token = self.request.reaktor_user.token
-            result = VoucherItem.remove(token, voucher_code, basket_id)
-            msg = self.response_codes.get(result.code, _("Your code can't be activated. Please contact us to resolve this issue."))
+            try:
+                result = VoucherItem.remove(token, voucher_code, basket_id)
+            except ReaktorApiError:
+                msg = self.response_codes.default_factory()
+            else:
+                msg = self.response_codes[result.code]
             # reaktor returned an error result code
             if msg is not True:
                 raise forms.ValidationError(msg)
@@ -505,7 +515,7 @@ class CardCodeRemoveForm(CardCodeForm):
 class CardCodeRedeemForm(CardCodeForm):
     """Form that handles redeeming of Ebook voucher card."""
 
-    response_codes = {
+    _response_codes = {
         'SUCCESS': True,
         'FAILURE_FULFILLMENT_INDIVIDUAL_POSITION': _("The checkout failed because one basket position could not be fulfilled."),
         'FAILURE_INTERNAL_ERROR': _("The checkout failed with an internal error."),
@@ -523,10 +533,15 @@ class CardCodeRedeemForm(CardCodeForm):
                 checkout_props = {'externalTransactionID': self.request.session['referral']}
             else:
                 checkout_props = {}
-            result = Basket.checkout(token, basket_id, None, checkout_props)
-            self._basket = result.basket
-            msg = self.response_codes.get(result.code, _("Your code can't be activated. Please contact us to resolve this issue."))
+            try:
+                result = Basket.checkout(token, basket_id, None, checkout_props)
+            except ReaktorApiError:
+                msg = self.response_codes.default_factory()
+            else:
+                msg = self.response_codes[result.code]
+            msg = self.response_codes[result.code]
             # reaktor returned an error result code
             if msg is not True:
                 raise forms.ValidationError(msg)
+            self._basket = result.basket
         return cleaned_data
