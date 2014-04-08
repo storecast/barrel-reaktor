@@ -515,7 +515,8 @@ class CardCodeRemoveForm(CardCodeForm):
             # remove the document from the basket in case of no errors
             for item in result.basket.document_items:
                 item.remove_from_basket(self.request.reaktor_user.token, result.basket.id, item.document.id)
-            # since `WSDocMgmt.changeDocumentBasketPosition` returns void, we need to do a separate call to get the updated basket
+            # since `WSDocMgmt.changeDocumentBasketPosition` returns void,
+            # we need to do a separate call to get the updated basket
             self._basket = Basket.get_by_id(token, result.basket.id)
             # remove the voucher code either from user settings
             if self.request.reaktor_user.is_authenticated():
@@ -554,9 +555,9 @@ class CardCodeRedeemForm(CardCodeForm):
                 msg = self.response_codes.default_factory()
             else:
                 msg = self.response_codes[result.code]
-            msg = self.response_codes[result.code]
             # reaktor returned an error result code
             if msg is not True:
                 raise forms.ValidationError(msg)
+            # reaktor returned basket in result in case of no errors
             self._basket = result.basket
         return cleaned_data
