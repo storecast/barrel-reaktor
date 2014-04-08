@@ -8,11 +8,11 @@ class Notification(Store):
     id = Field(target='ID')
     isbn = LongIntField(target='isbn')
     type = Field(target='type')
+    display_name = Field(target='displayName')
+    creation_date = DateField(target='creationTime')
 
 
 class PriceNotification(Notification):
-    creation_date = DateField(target='creationTime')
-    display_name = Field(target='displayName')
     new_amount = FloatField(target='newPrice:amount')
     new_currency = Field(target='newPrice:currency')
     old_amount = FloatField(target='oldPrice:amount')
