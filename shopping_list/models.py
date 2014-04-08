@@ -8,11 +8,11 @@ class Notification(Store):
     id = Field(target='ID')
     isbn = LongIntField(target='isbn')
     type = Field(target='type')
+    display_name = Field(target='displayName')
+    creation_date = DateField(target='creationTime')
 
 
 class PriceNotification(Notification):
-    creation_date = DateField(target='creationTime')
-    display_name = Field(target='displayName')
     new_amount = FloatField(target='newPrice:amount')
     new_currency = Field(target='newPrice:currency')
     old_amount = FloatField(target='oldPrice:amount')
@@ -35,6 +35,11 @@ class PriceNotification(Notification):
         return not self.price_down
 
 
+class StateNotification(Notification):
+    old_state = Field(target='oldState')
+    new_state = Field(target='newState')
+
+
 def notification_factory(data=None):
     """Notification factory to get properly typed notifications."""
     if data is None:
@@ -42,6 +47,9 @@ def notification_factory(data=None):
     notification_type = data.get('type', 'NONE')
     if notification_type in ('DOCUMENT_LESS_EXPENSIVE', 'DOCUMENT_MORE_EXPENSIVE'):
         return PriceNotification(data)
+    #TODO (Iurii Kudriavtsev): check if there is any other type for `StateNotification`
+    elif notification_type in ('DOCUMENT_REMOVED',):
+        return StateNotification(data)
     else:
         raise ValueError('Notification type not supported: %s' % notification_type)
 
