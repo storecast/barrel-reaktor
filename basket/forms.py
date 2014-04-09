@@ -550,7 +550,7 @@ class CardCodeRedeemForm(CardCodeForm):
             else:
                 checkout_props = {}
             try:
-                result = Basket.checkout(token, basket_id, None, checkout_props)
+                result = Basket.checkout(token, basket_id, checkout_props)
             except ReaktorApiError:
                 msg = self.response_codes.default_factory()
             else:
