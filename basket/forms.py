@@ -560,4 +560,7 @@ class CardCodeRedeemForm(CardCodeForm):
                 raise forms.ValidationError(msg)
             # reaktor returned basket in result in case of no errors
             self._basket = result.basket
+            # remove the voucher code from user settings
+            self.request.reaktor_user.settings['skins.' + self.setting_name] = ''
+            ReaktorUser.mapper.change_settings_from_user_obj(token, self.request.reaktor_user)
         return cleaned_data
