@@ -442,7 +442,7 @@ class CardCodeForm(CustomErrorForm):
     def __init__(self, request, *args, **kwargs):
         super(CardCodeForm, self).__init__(*args, **kwargs)
         self.request = request
-        self.response_codes = defaultdict(lambda: _("Your code can't be activated. Please contact us to resolve this issue."), self._response_codes)
+        self.response_codes = defaultdict(lambda: _("Our service is currently unavailable. Please try again later or contact our customer service."), self._response_codes)
 
     def get_basket(self):
         return getattr(self, '_basket', None)
