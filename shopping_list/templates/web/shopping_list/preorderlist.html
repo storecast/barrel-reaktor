@@ -43,7 +43,7 @@
 
 							<h5>
 								{% if item.pre_paid %}
-									{{ _("Pre-release voucher card purchase") }}
+									{{ _("Added on %s using an eBook card.") % item.creation_date|nice_date }}
 								{% elif oldest_notif and oldest_notif.previous_price != doc.price %}
 									{{ _("Pre-ordered on %s for %s, the current price is %s.") % (item.creation_date|nice_date, oldest_notif.previous_price|currencyfmt, doc.price|currencyfmt) }}
 									{{ _("You save %s.") % ((oldest_notif.previous_price - doc.price)|currencyfmt) }}
