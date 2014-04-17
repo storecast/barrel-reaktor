@@ -124,14 +124,15 @@ class Preorderlist(Store, RpcMixin):
     def get_by_token(cls, token):
         return cls.signature(method='getPreOrderList', args=[token])
 
-    @property
-    def notified_items(self):
-        """Iterate over list items and add notifications to them so that item
-        notifications are placed just next to the items themselves.
-        """
-        for item in self.items:
-            item.notifications = []
-            for notif in self.notifications:
-                if notif.isbn == item.document.attributes.isbn:
-                    item.notifications.append(notif)
-            yield item
+    def _alerts(self, alert_type, doc):
+        alerts = []
+        for alert in self.notifications:
+            if isinstance(alert, alert_type) and alert.isbn == doc.attributes.isbn:
+                alerts.append(alert)
+        return alerts
+
+    def price_alerts(self, doc):
+        return self._alerts(PriceNotification, doc)
+
+    def state_alerts(self, doc):
+        return self._alerts(StateNotification, doc)

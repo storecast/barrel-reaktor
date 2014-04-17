@@ -16,9 +16,10 @@
 
 		<div class="tx-list">
 			<ul class="tx-list-list tx-list-shadow small-block-grid-1 large-block-grid-1">
-			{% for item in preorderlist.notified_items %}
+			{% for item in preorderlist.items %}
 				{% set doc = item.document %}
-				{% set oldest_notif = item.notifications[-1] if item.notifications else None %}
+				{# Friday evening code #}
+				{% set oldest_price_alert = (preorderlist.price_alerts(doc) or [False]).pop() %}
 
 				<li>
 					<div class="tx-list-item">
@@ -44,9 +45,9 @@
 							<h5>
 								{% if item.pre_paid %}
 									{{ _("Added on %s using an eBook card.") % item.creation_date|nice_date }}
-								{% elif oldest_notif and oldest_notif.previous_price != doc.price %}
-									{{ _("Pre-ordered on %s for %s, the current price is %s.") % (item.creation_date|nice_date, oldest_notif.previous_price|currencyfmt, doc.price|currencyfmt) }}
-									{{ _("You save %s.") % ((oldest_notif.previous_price - doc.price)|currencyfmt) }}
+								{% elif oldest_price_alert and oldest_price_alert.previous_price != doc.price %}
+									{{ _("Pre-ordered on %s for %s, the current price is %s.") % (item.creation_date|nice_date, oldest_price_alert.previous_price|currencyfmt, doc.price|currencyfmt) }}
+									{{ _("You save %s.") % ((oldest_price_alert.previous_price - doc.price)|currencyfmt) }}
 								{% else %}
 									{{ _("Pre-ordered on %s for %s") % (item.creation_date|nice_date, doc.price|currencyfmt) }}
 								{% endif %}
