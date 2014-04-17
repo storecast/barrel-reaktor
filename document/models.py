@@ -104,8 +104,8 @@ class Document(Store, RpcMixin):
         return self.catalog_state == 'PRE_RELEASE'
 
     @property
-    def is_pending(self):
-        return self.user_state == 'FULFILLMENT_PENDING'
+    def is_fulfilled(self):
+        return self.user_state == 'FULFILLED'
 
     @property
     def is_upload(self):
