@@ -14,24 +14,28 @@ class Document(Store, RpcMixin):
         last_name = Field(target='lastName')
 
     class Attributes(Store):
-        author = Field(target='author', default='')
         as_epub = BooleanField(target='available_as_epub') # should be deprecated soon
         as_pdf = BooleanField(target='available_as_pdf') # should be deprecated soon
         as_watermark = BooleanField(target='available_as_watermark') # should be deprecated soon
-        via_iap = BooleanField(target='available_via_iap') # should be deprecated soon
-        with_adobe_drm = BooleanField(target='available_with_adobe_drm') # should be deprecated soon
-        hash = Field(target='binary_hash')
-        content_provider_name = Field(target='content_provider_name')
+        author = Field(target='author', default='')
+        author_bio = Field(target='author_biography', default='')
         content_provider_id = Field(target='content_provider_specific_id')
+        content_provider_name = Field(target='content_provider_name')
         content_source_id = Field(target='content_source_id')
         cover_ratio = FloatField(target='cover_image_aspect_ratio')
         currency = Field(target='currency')
-        first_publication = Field(target='date_of_first_publication')
         description = Field(target='description')
+        editors_comment = Field(target='editors_comment')
+        extract = Field(target='extract')
+        first_publication = Field(target='date_of_first_publication')
         fulfillment_id = Field(target='fulfillment_id')
         fulfillment_type = Field(target='fulfillment_type')
+        hash = Field(target='binary_hash')
         isbn = LongIntField(target='isbn')
         language = Field(target='language')
+        large_cover_url = Field(target='cover_image_url_large')
+        medium_cover_url = Field(target='cover_image_url_medium')
+        normal_cover_url = Field(target='cover_image_url_normal')
         pages = IntField(target='number_of_pages')
         price = FloatField(target='price')
         publication_date = DateField(target='publication_date', default='')
@@ -41,22 +45,21 @@ class Document(Store, RpcMixin):
         subtitle = Field(target='subtitle')
         tax_group = Field(target='tax_group')
         title = Field(target='title', default='')
-        year = IntField(target='year')
-        large_cover_url = Field(target='cover_image_url_large')
-        normal_cover_url = Field(target='cover_image_url_normal')
-        medium_cover_url = Field(target='cover_image_url_medium')
         undiscounted_price = FloatField(target='undiscounted_price')
+        via_iap = BooleanField(target='available_via_iap') # should be deprecated soon
+        with_adobe_drm = BooleanField(target='available_with_adobe_drm') # should be deprecated soon
+        year = IntField(target='year')
 
     # probably should be moved outside of this class
     class Category(Store):
         id = Field(target='ID')
+        children = Field(target='childrenIDs')
+        count = IntField(target='count')
+        filter = Field(target='filter')
         name = Field(target='name')
         offset = IntField(target='offset')
-        count = IntField(target='count')
-        subtree_size = IntField(target='subtreeSize')
-        children = Field(target='childrenIDs')
         parent = Field(target='parentID')
-        filter = Field(target='filter')
+        subtree_size = IntField(target='subtreeSize')
 
     class License(Store):
         key = Field(target='key')
@@ -110,6 +113,10 @@ class Document(Store, RpcMixin):
     @property
     def is_upload(self):
         return self.user_state == 'UPLOADED_BY_USER'
+
+    @property
+    def has_drm(self):
+        return self.version_access_type == "ADEPT_DRM"
 
     @classmethod
     def get_by_id(cls, token, doc_id):
