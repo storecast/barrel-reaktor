@@ -84,6 +84,7 @@ class Document(Store, RpcMixin):
     modification_date = DateField(target='modificationTime')
     name = Field(target='displayName')
     owner = Field(target='owner')
+    type = Field(target='type')
     user_state = Field(target='userDocumentState')
     version = IntField(target='version')
     version_access_type = Field(target='versionAccessType')
@@ -93,6 +94,10 @@ class Document(Store, RpcMixin):
     @property
     def is_commercial(self):
         return any([l.key in COMMERCIAL_LICENSES for l in self.licenses])
+
+    @property
+    def is_user(self):
+        return self.type == 'USER'
 
     @property
     def price(self):

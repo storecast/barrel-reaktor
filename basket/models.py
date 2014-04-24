@@ -282,12 +282,7 @@ class Basket(Store, RpcMixin):
 
 
 class CheckoutResult(Store):
-
-    class Item(Store):
-        user_document_id = Field(target='userDocumentID')
-
     basket = EmbeddedStoreField(target='basket', store_class=Basket)
     code = Field(target='resultCode')
-    items = EmbeddedStoreField(target='positionResults', store_class=Item, is_array=True)
     receipt_id = Field(target='receiptIdentifier')
     transaction_id = Field(target='transactionID')
