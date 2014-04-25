@@ -92,14 +92,6 @@ class Document(Store, RpcMixin):
     votes = IntField(target='numberOfVotes')
 
     @property
-    def is_commercial(self):
-        return any([l.key in COMMERCIAL_LICENSES for l in self.licenses])
-
-    @property
-    def is_user(self):
-        return self.type == 'USER'
-
-    @property
     def price(self):
         return Money(amount=self.attributes.price, currency=self.attributes.currency)
 
@@ -109,15 +101,23 @@ class Document(Store, RpcMixin):
 
     @property
     def is_preorder(self):
-        return self.catalog_state == 'PRE_RELEASE'
+        return not self.is_user and self.catalog_state == 'PRE_RELEASE'
 
     @property
     def is_fulfilled(self):
         return self.user_state == 'FULFILLED'
 
     @property
+    def is_user(self):
+        return self.type == 'USER'
+
+    @property
     def is_upload(self):
         return self.user_state == 'UPLOADED_BY_USER'
+
+    @property
+    def is_commercial(self):
+        return any([l.key in COMMERCIAL_LICENSES for l in self.licenses])
 
     @property
     def has_drm(self):
