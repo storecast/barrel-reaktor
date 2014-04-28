@@ -435,7 +435,6 @@ class CardCodeForm(CustomErrorForm):
         'VOUCHER_BELONGS_TO_DIFFERENT_USER': _('This voucher is invalid. It belongs to another user already.'),
         'VOUCHER_ALREADY_REDEEMED': _("This code has already been activated. Please recheck your entry and try again."),
     }
-    setting_name = 'preview_voucher_code'
 
     basket_id = forms.CharField(widget=forms.HiddenInput)
 
@@ -482,13 +481,6 @@ class CardCodeAddForm(CardCodeForm):
             # reaktor returned basket in result in case of no errors
             else:
                 self._basket = result.basket
-                # save the voucher code either to user settings
-                if self.request.reaktor_user.is_authenticated():
-                    self.request.reaktor_user.settings['skins.' + self.setting_name] = voucher_code
-                    ReaktorUser.mapper.change_settings_from_user_obj(token, self.request.reaktor_user)
-                # or to session
-                elif self.setting_name not in self.request.session:
-                    self.request.session[self.setting_name] = voucher_code
         return cleaned_data
 
 
@@ -518,13 +510,6 @@ class CardCodeRemoveForm(CardCodeForm):
             # since `WSDocMgmt.changeDocumentBasketPosition` returns void,
             # we need to do a separate call to get the updated basket
             self._basket = Basket.get_by_id(token, result.basket.id)
-            # remove the voucher code either from user settings
-            if self.request.reaktor_user.is_authenticated():
-                self.request.reaktor_user.settings['skins.' + self.setting_name] = ''
-                ReaktorUser.mapper.change_settings_from_user_obj(token, self.request.reaktor_user)
-            # or from session
-            else:
-                del self.request.session[self.setting_name]
         return cleaned_data
 
 
