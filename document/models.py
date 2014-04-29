@@ -38,7 +38,7 @@ class Document(Store, RpcMixin):
         normal_cover_url = Field(target='cover_image_url_normal')
         pages = IntField(target='number_of_pages')
         price = FloatField(target='price')
-        publication_date = DateField(target='publication_date', default='')
+        publication_date = DateField(target='publication_date')
         publication_status = DateField(target='publication_status')
         publisher = Field(target='publisher')
         size = IntField(target='size')
@@ -105,7 +105,7 @@ class Document(Store, RpcMixin):
 
     @property
     def is_fulfilled(self):
-        return self.user_state == 'FULFILLED'
+        return self.user_state == 'FULFILLED' or self.is_upload
 
     @property
     def is_user(self):
