@@ -431,7 +431,7 @@ class CardCodeForm(CustomErrorForm):
     _response_codes = {
         'VOUCHER_APPLIED': True,
         'VOUCHER_REMOVED': True,
-        'ILLEGAL_VOUCHER_CODE': _("Your code should have at least 8 characters and may contain both numbers and letters."),
+        'ILLEGAL_VOUCHER_CODE': _("Your code should have at least 8 characters and may contain both numbers and lowercase letters."),
         'VOUCHER_BELONGS_TO_DIFFERENT_USER': _('This voucher is invalid. It belongs to another user already.'),
         'VOUCHER_ALREADY_REDEEMED': _("This code has already been activated. Please recheck your entry and try again."),
     }
