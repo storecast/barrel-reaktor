@@ -3,10 +3,10 @@ from apps.barrel.rpc import RpcMixin
 
 
 class PasswordPolicy(Store):
-    min_length = Field(target='minimumLength')
-    number_char_classes = Field(target='requiredNumberOfCharacterClasses')
-    supported_char_classes = SplitField(target='supportedCharacterClasses')
-    rules = SplitField(target='rules')
+    min_length = IntField(target='minimumLength', default=5)
+    number_char_classes = IntField(target='requiredNumberOfCharacterClasses', default=0)
+    supported_char_classes = SplitField(target='supportedCharacterClasses', default=[])
+    rules = SplitField(target='rules', default=[])
 
 
 class Nature(Store, RpcMixin):
