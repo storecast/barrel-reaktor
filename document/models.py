@@ -1,5 +1,6 @@
 from apps.barrel import Store, Field, BooleanField, DateField, IntField, FloatField, LongIntField, EmbeddedStoreField
 from apps.barrel.rpc import RpcMixin
+from apps.barrel.cache import memoize
 from money import Money
 
 
@@ -124,6 +125,7 @@ class Document(Store, RpcMixin):
         return self.version_access_type == "ADEPT_DRM"
 
     @classmethod
+    @memoize(duration=3600)
     def get_by_id(cls, token, doc_id):
         """Returns `Document` instance for the given id."""
         return cls.signature(method='getDocument', args=[token, doc_id])
@@ -139,6 +141,7 @@ class Document(Store, RpcMixin):
         return cls.signature(method='getUserDocumentID', data_converter=lambda d: d, args=[token, doc_id])
 
     @classmethod
+    @memoize(duration=3600)
     def get_by_isbn(cls, token, isbn):
         """Returns a document by isbn, using search API endpoint since fetching doc by isbn requires extra rights."""
         def converter(data):
