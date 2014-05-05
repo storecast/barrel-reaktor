@@ -1,4 +1,4 @@
-from apps.barrel import Store, Field, BooleanField, DateField, IntField, EmbeddedStoreField
+from apps.barrel import Store, Field, BooleanField, DateField, EmbeddedStoreField
 from apps.barrel.rpc import RpcMixin
 from apps.reaktor_barrel.document.models import Document
 from apps.reaktor_barrel.models import Price
@@ -127,20 +127,20 @@ class Basket(Store, RpcMixin):
 
     # txtr to adyen mapping of payment methods;
     # see Enum com.bookpac.server.shop.payment.PaymentMethod and adyen's Integration Manual pp 12+13 for the names
-    PAYMENT_METHODS = { "CREDITCARD" : ["visa", "mc"], "ELV":["elv"] }
+    PAYMENT_METHODS = {"CREDITCARD": ["visa", "mc"], "ELV": ["elv"]}
 
     PAYMENT_TRANSLATIONS = {
         # See: SKINSTXTRCOM-2165
-        'CREDITCARD': _('Credit Card'), # "CREDITCARD should stay to be backward compatible, my son." --Stephan Noske
+        'CREDITCARD': _('Credit Card'),  # "CREDITCARD should stay to be backward compatible, my son." --Stephan Noske
         'AMEX-SSL': _('American Express'),
         'VISA-SSL': _('Visa'),
         'VISA_COMMERCIAL_CREDIT-SSL': _('Visa'),
         'VISA_CREDIT-SSL': _('Visa'),
-        'visa': _('Visa'), # lowercase key, comes from Adyen
+        'visa': _('Visa'),  # lowercase key, comes from Adyen
         'ECMC-SSL': _('MasterCard'),
         'ECMC_COMMERCIAL_CREDIT-SSL': _('MasterCard'),
         'ECMC_CREDIT-SSL': _('MasterCard'),
-        'mc': _('MasterCard'), # lowercase key, comes from Adyen
+        'mc': _('MasterCard'),  # lowercase key, comes from Adyen
         'PAYPAL_EXPRESS': _('PayPal'),
         'ELV': _('Direct Debit'),
         'ELV-SSL': _('Direct Debit'),
@@ -274,7 +274,8 @@ class Basket(Store, RpcMixin):
 
     @classmethod
     def checkout(cls, token, basket_id, checkout_props):
-        return cls.signature(method='checkoutBasketAsynchronously', data_converter=CheckoutResult, args=[token, basket_id, checkout_props])
+        return cls.signature(method='checkoutBasketAsynchronously', data_converter=CheckoutResult,
+                             args=[token, basket_id, checkout_props])
 
     @classmethod
     def create(cls, token, marker=None):
