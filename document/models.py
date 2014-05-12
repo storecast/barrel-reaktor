@@ -75,7 +75,7 @@ class Document(Store, RpcMixin):
     creator = Field(target='creator')
     drm_type = Field(target='drmType')
     file_name = Field(target='fileName', default='')
-    format = Field(target='format')
+    format = Field(target='format', default='')
     has_thumbnail = BooleanField(target='hasThumbnail')
     in_public_list = BooleanField(target='inPublicList')
     lang_code = Field(target='languageCode')

@@ -46,13 +46,6 @@ class DocumentResult(Store):
     total_count = Field(target="totalNumberOfResults")
 
 
-class SuggestionResult(Store):
-    """Suggestions are very lightweight documents (few attributes are present).
-    There is no suggestion item as for document search and basket.
-    """
-    documents = EmbeddedStoreField(target=False, store_class=Document, is_array=True)
-
-
 class Search(RpcMixin):
     """Interface to various API search endpoints. Beware that this one is not
     a `Store`, which means that when calling its class methods,
@@ -77,4 +70,4 @@ class Search(RpcMixin):
         if highlight:
             method = 'getSuggestionObjectsWithHighlights'
             args.append(highlight)
-        return cls.signature(method=method, data_converter=SuggestionResult, args=args)
+        return cls.signature(method=method, data_converter=Document, args=args)
