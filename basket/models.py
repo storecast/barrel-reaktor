@@ -281,6 +281,10 @@ class Basket(Store, RpcMixin):
     def create(cls, token, marker=None):
         return cls.signature(method='getNewBasket', args=[token, marker])
 
+    @classmethod
+    def clear(cls, token, basket_id):
+        return cls.signature(method='removeAllBasketPositions', args=[token, basket_id])
+
 
 class CheckoutResult(Store):
     basket = EmbeddedStoreField(target='basket', store_class=Basket)
