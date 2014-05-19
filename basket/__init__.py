@@ -63,6 +63,7 @@ def update_basket_for_request(request, basket):
     token = request.reaktor_user.token
     updated = False
     document = None
+    add_to_basket = request.site.siteconf.add_to_basket
     if item_type == 'DOCUMENT':
         if item_action == 'add':
             already_in = False
@@ -73,6 +74,8 @@ def update_basket_for_request(request, basket):
                     break
             # add an item to basket if needed
             if not already_in:
+                if not add_to_basket:
+                    Basket.clear(token, basket.id)
                 # Basket error handling
                 #TODO (Iurii Kudriavtsev): improve this to handle ajax `Add to Basket` properly
                 try:
