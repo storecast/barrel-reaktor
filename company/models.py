@@ -1,6 +1,6 @@
 from apps.barrel import Store, Field, BooleanField, EmbeddedStoreField, IntField, SplitField
 from apps.barrel.rpc import RpcMixin
-from apps.barrel.cache import memoize
+from apps.barrel.cache import cache
 
 
 class PasswordPolicy(Store):
@@ -38,6 +38,6 @@ class Company(Store, RpcMixin):
     natures = EmbeddedStoreField(target='natures', store_class=Nature, is_array=True)
 
     @classmethod
-    @memoize(duration=3600*8)
+    @cache(duration=3600*8)
     def get_by_name(cls, name):
         return cls.signature(method='getCompany', args=[name])
