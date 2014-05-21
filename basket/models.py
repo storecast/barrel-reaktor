@@ -261,6 +261,10 @@ class Basket(Store, RpcMixin):
         return cls.signature(method='getBasket', args=[token, basket_id])
 
     @classmethod
+    def get_by_token(cls, token):
+        return cls.get_by_id(token, None)
+
+    @classmethod
     def get_free(cls, token, marker=None):
         return cls.signature(method='getFreeBasket', args=[token, marker])
 
