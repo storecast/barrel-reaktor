@@ -76,6 +76,7 @@ class Document(Store, RpcMixin):
     owner = Field(target='owner')
     type = Field(target='type')
     user_state = Field(target='userDocumentState', default='?')
+    user_tags = Field(target='userTags', default=[])
     version = IntField(target='version')
     version_access_type = Field(target='versionAccessType')
     version_size = IntField(target='versionSize')
