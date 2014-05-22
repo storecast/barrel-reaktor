@@ -1,6 +1,6 @@
 from apps.barrel import Store, Field, BooleanField, DateField, IntField, FloatField, LongIntField, EmbeddedStoreField
-from apps.barrel.rpc import RpcMixin
 from apps.barrel.cache import cache, sliced_call_args
+from apps.barrel.rpc import RpcMixin
 from money import Money
 
 
@@ -51,17 +51,6 @@ class Document(Store, RpcMixin):
         with_adobe_drm = BooleanField(target='available_with_adobe_drm') # should be deprecated soon
         year = IntField(target='year')
 
-    # probably should be moved outside of this class
-    class Category(Store):
-        id = Field(target='ID')
-        children = Field(target='childrenIDs')
-        count = IntField(target='count')
-        filter = Field(target='filter')
-        name = Field(target='name')
-        offset = IntField(target='offset')
-        parent = Field(target='parentID')
-        subtree_size = IntField(target='subtreeSize')
-
     class License(Store):
         key = Field(target='key')
         user_roles = Field(target='currentUserRoles')
@@ -70,7 +59,7 @@ class Document(Store, RpcMixin):
     attributes = EmbeddedStoreField(target='attributes', store_class=Attributes)
     authors = EmbeddedStoreField(target='authors', store_class=Author, is_array=True)
     catalog_state = Field(target='catalogDocumentState')
-    categories = EmbeddedStoreField(target='contentCategories', store_class=Category, is_array=True)
+    _categories = EmbeddedStoreField(target='contentCategories', store_class='apps.reaktor_barrel.category.models.Category', is_array=True)
     category_ids = Field(target='contentCategoryIDs')
     creation_date = DateField(target='creationTime')
     creator = Field(target='creator')
@@ -123,6 +112,26 @@ class Document(Store, RpcMixin):
     @property
     def has_drm(self):
         return self.version_access_type == "ADEPT_DRM"
+
+    @property
+    def categories(self):
+        """Builds a list of categories in tree order, from oldest ancestor to the leaf.
+        It relies on both `category_ids` and `_categories` attributes.
+        Note that according to reaktor, when viewing a document from a catalog that is not
+        associated to the token nature, the information is not available.
+        """
+        if hasattr(self, '_category_trail'):
+            return self._category_trail
+        trail = []
+        if self.category_ids:
+            cats = dict([(c.id, c) for c in self._categories])
+            current = cats.pop(self.category_ids[0], None)
+            trail = [current]
+            while current.parent_id:
+                current = cats.pop(current.parent_id)
+                trail.insert(0, current)
+        self._category_trail = trail
+        return trail
 
     @classmethod
     @cache(duration=3600, keygen=sliced_call_args(i=1), need_cache=lambda doc: not doc.is_upload)
