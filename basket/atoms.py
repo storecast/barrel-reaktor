@@ -4,7 +4,7 @@ from django.utils.translation import ugettext_lazy as _
 from apps.compact_url import reverse
 from apps.prototypes.decorators import atom
 from apps.site_conf.models import SiteConf
-from .forms import PayNowForm
+from plugins.checkout_nju.forms import PayNowForm
 
 
 @atom('atoms/checkout/basket_list.html')
