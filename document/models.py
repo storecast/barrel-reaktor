@@ -33,6 +33,7 @@ class Document(Store, RpcMixin):
         fulfillment_type = Field(target='fulfillment_type')
         hash = Field(target='binary_hash')
         isbn = LongIntField(target='isbn')
+        imprint = Field(target='imprint', default='')
         language = Field(target='language')
         large_cover_url = Field(target='cover_image_url_large')
         medium_cover_url = Field(target='cover_image_url_medium')
