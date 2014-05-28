@@ -18,7 +18,7 @@ class Document(Store, RpcMixin):
         as_epub = BooleanField(target='available_as_epub') # should be deprecated soon
         as_pdf = BooleanField(target='available_as_pdf') # should be deprecated soon
         as_watermark = BooleanField(target='available_as_watermark') # should be deprecated soon
-        author = Field(target='author', default='')
+        author = Field(target='author', default=u'')
         author_bio = Field(target='author_biography', default='')
         content_provider_id = Field(target='content_provider_specific_id')
         content_provider_name = Field(target='content_provider_name')
@@ -46,7 +46,7 @@ class Document(Store, RpcMixin):
         size = IntField(target='size')
         subtitle = Field(target='subtitle')
         tax_group = Field(target='tax_group')
-        title = Field(target='title', default='')
+        title = Field(target='title', default=u'')
         undiscounted_price = FloatField(target='undiscounted_price')
         via_iap = BooleanField(target='available_via_iap') # should be deprecated soon
         with_adobe_drm = BooleanField(target='available_with_adobe_drm') # should be deprecated soon
@@ -55,6 +55,9 @@ class Document(Store, RpcMixin):
     class License(Store):
         key = Field(target='key')
         user_roles = Field(target='currentUserRoles')
+
+    class Preview(Store):
+        format = Field(target='format')
 
     id = Field(target='documentID')
     attributes = EmbeddedStoreField(target='attributes', store_class=Attributes)
@@ -75,6 +78,7 @@ class Document(Store, RpcMixin):
     modification_date = DateField(target='modificationTime')
     name = Field(target='displayName')
     owner = Field(target='owner')
+    previews = EmbeddedStoreField(target='documentPreviews', store_class=Preview, is_array=True)
     type = Field(target='type')
     user_state = Field(target='userDocumentState', default='?')
     user_tags = Field(target='userTags', default=[])
@@ -82,6 +86,8 @@ class Document(Store, RpcMixin):
     version_access_type = Field(target='versionAccessType')
     version_size = IntField(target='versionSize')
     votes = IntField(target='numberOfVotes')
+    cumulative_votes = IntField(target='cumulativeVotes:stars', default=0)
+    personal_votes = IntField(target='personalVotes:stars', default=0)
 
     @property
     def price(self):
