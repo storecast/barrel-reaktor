@@ -1,3 +1,4 @@
+from babel import Locale
 from cms.models import Page
 from django.utils.translation import ugettext_lazy as _
 
@@ -41,8 +42,9 @@ def voucher_form(instance, basket, form, csrf_token):
 
 
 @atom('atoms/checkout/address_form.html')
-def address_form(reaktor_user, has_billing_address, form, disabled_fields, csrf_token, site_conf):
+def address_form(request, has_billing_address, form, disabled_fields, csrf_token, site_conf):
     """Atom to render the billing address section (3) in the checkout plugin."""
+    reaktor_user = request.reaktor_user
     settings = reaktor_user.settings
     prefix = 'com.bookpac.user.settings.shop.'
     address = {
@@ -59,7 +61,10 @@ def address_form(reaktor_user, has_billing_address, form, disabled_fields, csrf_
     state = settings.get(prefix + 'state', None)
     if state and state.lower() != "null":
         address['location'] = u', '.join((address['location'], state))
-
+    # print country as shown in the form
+    if address.get('country') is not None:
+        locale = Locale.parse(request.LANGUAGE_CODE, sep="-")
+        address['country'] = locale.territories[address['country']]
     address_empty = address.get('firstname') is None and address.get('lastname') is None and  address.get('address') is None and address.get('zipcode') is None and address.get('location') is None and address.get('country') is None
 
     return {
