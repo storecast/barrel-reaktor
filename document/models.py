@@ -142,7 +142,16 @@ class Document(Store, RpcMixin):
         return trail
 
     @classmethod
-    @cache(duration=3600, keygen=sliced_call_args(i=1), need_cache=lambda doc: not doc.is_upload)
+    @cache(
+        duration=3600,
+        keygen=sliced_call_args(i=1),
+        # reaktor call may return `None`
+        # so we basically store `None` in cache to avoid
+        # multiple reaktor calls
+        # the use case - when the document is available by search,
+        # but not available by id. Happens if reaktor index is outdated
+        need_cache=lambda doc: (doc and not doc.is_upload) or not doc
+    )
     def get_by_id(cls, token, doc_id):
         """Returns `Document` instance for the given id."""
         return cls.signature(method='getDocument', args=[token, doc_id])
