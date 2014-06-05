@@ -176,7 +176,14 @@ class Document(Store, RpcMixin):
             else:
                 return None
         args = [token, 'isbn:%s' % isbn, None, 0, 1, None, False, None, None, {'resultType': 'Object'}]
-        return cls.signature(interface="WSSearchDocument", method='searchDocuments', data_converter=converter, args=args)
+        return cls.signature(
+            interface="WSSearchDocument", method='searchDocuments', data_converter=converter, args=args)
+
+    @classmethod
+    @cache(duration=3600, keygen=sliced_call_args(i=1))
+    def get_related_by_id(cls, token, doc_id, offset=0, number_of_results=5):
+        """Returns a list of `Documents` that are related to the given id."""
+        return cls.signature(method='getDocumentsRelatedToDocument', args=[token, doc_id, offset, number_of_results])
 
     @classmethod
     def change_attributes(cls, token, doc_ids, attributes):
