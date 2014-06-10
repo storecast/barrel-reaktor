@@ -3,7 +3,6 @@ from barrel.rpc import RpcMixin
 from apps.reaktor_barrel.document.models import Document
 from apps.reaktor_barrel.models import Price
 from apps.reaktor_barrel.voucher.models import Voucher
-from django.utils.translation import ugettext as _
 from money import Money
 
 
@@ -129,25 +128,6 @@ class Basket(Store, RpcMixin):
     # see Enum com.bookpac.server.shop.payment.PaymentMethod and adyen's Integration Manual pp 12+13 for the names
     PAYMENT_METHODS = {"CREDITCARD": ["visa", "mc"], "ELV": ["elv"]}
 
-    PAYMENT_TRANSLATIONS = {
-        # See: SKINSTXTRCOM-2165
-        'CREDITCARD': _('Credit Card'),  # "CREDITCARD should stay to be backward compatible, my son." --Stephan Noske
-        'AMEX-SSL': _('American Express'),
-        'VISA-SSL': _('Visa'),
-        'VISA_COMMERCIAL_CREDIT-SSL': _('Visa'),
-        'VISA_CREDIT-SSL': _('Visa'),
-        'visa': _('Visa'),  # lowercase key, comes from Adyen
-        'ECMC-SSL': _('MasterCard'),
-        'ECMC_COMMERCIAL_CREDIT-SSL': _('MasterCard'),
-        'ECMC_CREDIT-SSL': _('MasterCard'),
-        'mc': _('MasterCard'),  # lowercase key, comes from Adyen
-        'PAYPAL_EXPRESS': _('PayPal'),
-        'ELV': _('Direct Debit'),
-        'ELV-SSL': _('Direct Debit'),
-        'DINERS': _("Diner's Club"),
-        'DINERS-SSL': _("Diner's Club"),
-    }
-
     # not sure if this is used
     # NOTE (Iurii Kudriavtsev): this is not a complete fields definition
     # class PaymentProperty(Store):
@@ -243,18 +223,6 @@ class Basket(Store, RpcMixin):
             return "ELV" in self.authorized_payment_methods
         else:
             return False
-
-    def translate_authorized_payment_methods(self):
-        """Returns a list of human-readable authorized payment methods.
-        """
-        payment_methods = []
-        if hasattr(self, 'authorized_payment_methods'):
-            for payment_method in self.authorized_payment_methods:
-                if payment_method in self.PAYMENT_TRANSLATIONS:
-                    payment_methods.append(self.PAYMENT_TRANSLATIONS[payment_method])
-                else:
-                    payment_methods.append(payment_method)
-        return payment_methods
 
     @classmethod
     def get_by_id(cls, token, basket_id):
