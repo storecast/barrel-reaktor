@@ -1,6 +1,6 @@
-from apps.barrel import Store, Field, BooleanField, DateField, IntField, FloatField, LongIntField, EmbeddedStoreField
-from apps.barrel.cache import cache, sliced_call_args
-from apps.barrel.rpc import RpcMixin
+from barrel import Store, Field, BooleanField, DateField, IntField, FloatField, LongIntField, EmbeddedStoreField
+from barrel.cache import cache, sliced_call_args
+from barrel.rpc import RpcMixin
 from money import Money
 
 

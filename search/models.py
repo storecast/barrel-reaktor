@@ -1,5 +1,5 @@
-from apps.barrel import Store, Field, FloatField, EmbeddedStoreField
-from apps.barrel.rpc import RpcMixin
+from barrel import Store, Field, FloatField, EmbeddedStoreField
+from barrel.rpc import RpcMixin
 from apps.reaktor_barrel.document.models import Document
 
 

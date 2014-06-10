@@ -1,5 +1,5 @@
-from apps.barrel import Store, Field, DateField, IntField
-from apps.barrel.rpc import RpcMixin
+from barrel import Store, Field, DateField, IntField
+from barrel.rpc import RpcMixin
 
 
 class List(Store, RpcMixin):

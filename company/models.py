@@ -1,6 +1,6 @@
-from apps.barrel import Store, Field, BooleanField, EmbeddedStoreField, IntField, SplitField
-from apps.barrel.rpc import RpcMixin
-from apps.barrel.cache import cache
+from barrel import Store, Field, BooleanField, EmbeddedStoreField, IntField, SplitField
+from barrel.rpc import RpcMixin
+from barrel.cache import cache
 
 
 class PasswordPolicy(Store):

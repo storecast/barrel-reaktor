@@ -1,4 +1,4 @@
-from apps.barrel import Store, Field, FloatField
+from barrel import Store, Field, FloatField
 
 
 class Price(Store):

@@ -1,6 +1,6 @@
-from apps.barrel import Store
-from apps.barrel.rpc import RpcMixin
-from apps.barrel.cache import cache, sliced_call_args
+from barrel import Store
+from barrel.rpc import RpcMixin
+from barrel.cache import cache, sliced_call_args
 from apps.reaktor_barrel.document.models import Document
 
 

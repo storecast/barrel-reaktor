@@ -1,5 +1,5 @@
-from apps.barrel import Store, Field, IntField, EmbeddedStoreField
-from apps.barrel.rpc import RpcMixin
+from barrel import Store, Field, IntField, EmbeddedStoreField
+from barrel.rpc import RpcMixin
 from apps.reaktor_barrel.models import Price
 from money import Money
 

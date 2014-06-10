@@ -1,6 +1,6 @@
-from apps.barrel import Store
-from apps.barrel.rpc import RpcMixin
-from apps.barrel.cache import clear_cache, reduced_call_key
+from barrel import Store
+from barrel.rpc import RpcMixin
+from barrel.cache import clear_cache, reduced_call_key
 from apps.reaktor_barrel.document.models import Document
 
 

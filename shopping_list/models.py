@@ -1,5 +1,5 @@
-from apps.barrel import Store, DateField, EmbeddedStoreField, Field, FloatField, LongIntField, BooleanField
-from apps.barrel.rpc import RpcMixin
+from barrel import Store, DateField, EmbeddedStoreField, Field, FloatField, LongIntField, BooleanField
+from barrel.rpc import RpcMixin
 from apps.reaktor_barrel.document.models import Document
 from money import Money
 

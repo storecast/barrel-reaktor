@@ -1,6 +1,6 @@
-from apps.barrel import Store, Field, IntField
-from apps.barrel.cache import cache, sliced_call_args
-from apps.barrel.rpc import RpcMixin
+from barrel import Store, Field, IntField
+from barrel.cache import cache, sliced_call_args
+from barrel.rpc import RpcMixin
 
 
 def document_converter(*args, **kwargs):

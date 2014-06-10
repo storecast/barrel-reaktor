@@ -1,5 +1,5 @@
-from apps.barrel import Store, Field, BooleanField, DateField, EmbeddedStoreField
-from apps.barrel.rpc import RpcMixin
+from barrel import Store, Field, BooleanField, DateField, EmbeddedStoreField
+from barrel.rpc import RpcMixin
 from apps.reaktor_barrel.document.models import Document
 from apps.reaktor_barrel.models import Price
 from apps.reaktor_barrel.voucher.models import Voucher
