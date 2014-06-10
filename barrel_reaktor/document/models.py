@@ -63,7 +63,7 @@ class Document(Store, RpcMixin):
     attributes = EmbeddedStoreField(target='attributes', store_class=Attributes)
     authors = EmbeddedStoreField(target='authors', store_class=Author, is_array=True)
     catalog_state = Field(target='catalogDocumentState')
-    _categories = EmbeddedStoreField(target='contentCategories', store_class='apps.reaktor_barrel.category.models.Category', is_array=True)
+    _categories = EmbeddedStoreField(target='contentCategories', store_class='barrel_reaktor.category.models.Category', is_array=True)
     category_ids = Field(target='contentCategoryIDs')
     creation_date = DateField(target='creationTime')
     creator = Field(target='creator')

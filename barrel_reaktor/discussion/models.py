@@ -1,7 +1,7 @@
 from barrel import Store
 from barrel.rpc import RpcMixin
 from barrel.cache import clear_cache, reduced_call_key
-from apps.reaktor_barrel.document.models import Document
+from barrel_reaktor.document.models import Document
 
 
 def doc_by_id_and_isbn(token, doc_id, stars):

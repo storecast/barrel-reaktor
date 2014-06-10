@@ -4,7 +4,7 @@ from barrel.rpc import RpcMixin
 
 
 def document_converter(*args, **kwargs):
-    from apps.reaktor_barrel.document.models import Document
+    from barrel_reaktor.document.models import Document
     return Document(*args, **kwargs)
 
 

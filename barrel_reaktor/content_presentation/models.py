@@ -1,7 +1,7 @@
 from barrel import Store
 from barrel.rpc import RpcMixin
 from barrel.cache import cache, sliced_call_args
-from apps.reaktor_barrel.document.models import Document
+from barrel_reaktor.document.models import Document
 
 
 class ContentPresentation(Store, RpcMixin):

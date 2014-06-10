@@ -1,8 +1,8 @@
 from barrel import Store, Field, BooleanField, DateField, EmbeddedStoreField
 from barrel.rpc import RpcMixin
-from apps.reaktor_barrel.document.models import Document
-from apps.reaktor_barrel.models import Price
-from apps.reaktor_barrel.voucher.models import Voucher
+from barrel_reaktor.document.models import Document
+from barrel_reaktor.models import Price
+from barrel_reaktor.voucher.models import Voucher
 from money import Money
 
 
