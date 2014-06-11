@@ -1,6 +1,7 @@
 from barrel import Store, Field, BooleanField, DateField, IntField, FloatField, LongIntField, EmbeddedStoreField
 from barrel.cache import cache, sliced_call_args
 from barrel.rpc import RpcMixin
+from holon import ReaktorArgumentError
 from money import Money
 
 
@@ -142,19 +143,15 @@ class Document(Store, RpcMixin):
         return trail
 
     @classmethod
-    @cache(
-        duration=3600,
-        keygen=sliced_call_args(i=1),
-        # reaktor call may return `None`
-        # so we basically store `None` in cache to avoid
-        # multiple reaktor calls
-        # the use case - when the document is available by search,
-        # but not available by id. Happens if reaktor index is outdated
-        need_cache=lambda doc: (doc and not doc.is_upload) or not doc
-    )
+    @cache(duration=3600, keygen=sliced_call_args(i=1), need_cache=lambda doc: doc.is_upload)
     def get_by_id(cls, token, doc_id):
         """Returns `Document` instance for the given id."""
-        return cls.signature(method='getDocument', args=[token, doc_id])
+        document = cls.signature(method='getDocument', args=[token, doc_id])
+        # reaktor call may return `None`
+        # raise a proper exception in this case
+        if not document:
+            raise ReaktorArgumentError
+        return document
 
     @classmethod
     def get_by_ids(cls, token, doc_ids):
@@ -179,8 +176,10 @@ class Document(Store, RpcMixin):
         def converter(data):
             if 'results' in data:
                 return Document(data['results'][0]['searchResult'])
+            # reaktor call may return `None`
+            # raise a proper exception in this case
             else:
-                return None
+                raise ReaktorArgumentError
         args = [token, 'isbn:%s' % isbn, None, 0, 1, None, False, None, None, {'resultType': 'Object'}]
         return cls.signature(
             interface="WSSearchDocument", method='searchDocuments', data_converter=converter, args=args)
