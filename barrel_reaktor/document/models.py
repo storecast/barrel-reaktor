@@ -167,6 +167,12 @@ class Document(Store, RpcMixin):
         return cls.signature(method='getUserDocumentID', data_converter=lambda d: d, args=[token, doc_id])
 
     @classmethod
+    def get_doc_path(cls, token, doc_id, is_user=False):
+        """Returns the path to unzipped epub user document or catalog preview."""
+        method = 'unzipEpubUserDocument' if is_user else 'unzipEpubPreview'
+        return cls.signature(method=method, data_converter=lambda d: d, args=[token, doc_id])
+
+    @classmethod
     @cache(duration=3600, keygen=sliced_call_args(i=1))
     def get_by_isbn(cls, token, isbn):
         """Returns a document by isbn, using search API endpoint since fetching doc by isbn requires extra rights."""
