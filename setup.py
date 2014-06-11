@@ -13,7 +13,7 @@ setup(
     url='https://github.com/txtr/barrel-reaktor/',
     packages=find_packages(),
     platforms='any',
-    install_requires=['barrel==0.0.1-dev', ],
+    install_requires=['barrel==0.0.1-dev', 'python-money',],
     dependency_links=[
         'https://github.com/txtr/barrel/zipball/master#egg=barrel-0.0.1-dev',
         'https://github.com/txtr/python-money/zipball/master#egg=python-money',
