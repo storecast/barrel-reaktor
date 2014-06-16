@@ -21,6 +21,7 @@ class Document(Store, RpcMixin):
         as_watermark = BooleanField(target='available_as_watermark') # should be deprecated soon
         author = Field(target='author', default=u'')
         author_bio = Field(target='author_biography', default='')
+        catalog_id = Field(target='catalog_document_id')
         content_provider_id = Field(target='content_provider_specific_id')
         content_provider_name = Field(target='content_provider_name')
         content_source_id = Field(target='content_source_id')
