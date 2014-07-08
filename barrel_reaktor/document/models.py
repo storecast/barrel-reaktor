@@ -1,4 +1,4 @@
-from barrel import Store, Field, BooleanField, DateField, IntField, FloatField, LongIntField, EmbeddedStoreField
+from barrel import Store, Field, BooleanField, DateField, IntField, FloatField, EmbeddedStoreField
 from barrel.cache import cache, sliced_call_args
 from barrel.rpc import RpcMixin
 from holon import ReaktorArgumentError
@@ -34,7 +34,7 @@ class Document(Store, RpcMixin):
         fulfillment_id = Field(target='fulfillment_id')
         fulfillment_type = Field(target='fulfillment_type')
         hash = Field(target='binary_hash')
-        isbn = LongIntField(target='isbn')
+        _isbn = Field(target='isbn')
         imprint = Field(target='imprint', default='')
         language = Field(target='language')
         large_cover_url = Field(target='cover_image_url_large')
@@ -53,6 +53,10 @@ class Document(Store, RpcMixin):
         via_iap = BooleanField(target='available_via_iap') # should be deprecated soon
         with_adobe_drm = BooleanField(target='available_with_adobe_drm') # should be deprecated soon
         year = IntField(target='year')
+
+        @property
+        def isbn(self):
+            return self._isbn.strip()
 
     class License(Store):
         key = Field(target='key')
