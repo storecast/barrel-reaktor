@@ -55,8 +55,6 @@ class Search(RpcMixin):
     interface = 'WSSearchDocument'
 
     @classmethod
-    # SKNS-4462: Short duration cache as a work around
-    @cache(duration=60, keygen=sliced_call_args(i=1))
     def documents(cls, token, search_string, offset, number_of_results, sort=None, direction=None, include_search_fields=None, sources=None, related=None, options=None):
         """Returns documents for a given string."""
         invert = direction == 'desc'
