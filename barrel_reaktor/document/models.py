@@ -1,5 +1,4 @@
 from barrel import Store, Field, BooleanField, DateField, IntField, FloatField, EmbeddedStoreField
-from barrel.cache import cache, sliced_call_args
 from barrel.rpc import RpcMixin
 from holon import ReaktorArgumentError
 from money import Money
@@ -148,7 +147,6 @@ class Document(Store, RpcMixin):
         return trail
 
     @classmethod
-    @cache(duration=3600, keygen=sliced_call_args(i=1), need_cache=lambda doc: doc.is_upload)
     def get_by_id(cls, token, doc_id):
         """Returns `Document` instance for the given id."""
         document = cls.signature(method='getDocument', args=[token, doc_id])
@@ -175,7 +173,6 @@ class Document(Store, RpcMixin):
         return cls.signature(method=method, data_converter=lambda d: d, args=[token, doc_id])
 
     @classmethod
-    @cache(duration=3600, keygen=sliced_call_args(i=1))
     def get_by_isbn(cls, token, isbn):
         """Returns a document by isbn, using search API endpoint since fetching doc by isbn requires extra rights."""
         def converter(data):
@@ -190,7 +187,6 @@ class Document(Store, RpcMixin):
             interface="WSSearchDocument", method='searchDocuments', data_converter=converter, args=args)
 
     @classmethod
-    @cache(duration=3600, keygen=sliced_call_args(i=1))
     def get_related_by_id(cls, token, doc_id, offset=0, number_of_results=5):
         """Returns a list of `Documents` that are related to the given id."""
         return cls.signature(method='getDocumentsRelatedToDocument', args=[token, doc_id, offset, number_of_results])

@@ -1,5 +1,4 @@
 from barrel import Store, Field, IntField
-from barrel.cache import cache, sliced_call_args
 from barrel.rpc import RpcMixin
 
 
@@ -22,7 +21,6 @@ class Category(Store, RpcMixin):
     total_count = IntField(target='subtreeSize')
 
     @classmethod
-    @cache(keygen=sliced_call_args(i=1), need_cache=lambda cat: False)  # ready to be enabled
     def get_by_id(cls, token, cat_id, with_children=True, offset='0', number_of_results=-1, sort=None, direction='asc'):
         invert = direction == 'desc'
         return cls.signature(method='getContentCategory',
@@ -34,7 +32,6 @@ class Category(Store, RpcMixin):
                              args=[token, depth, min_number_of_documents])
 
     @classmethod
-    @cache(keygen=sliced_call_args(i=1), need_cache=lambda docs: False)  # ready to be enabled
     def get_documents(cls, token, cat_id, include_sub_cats=False, offset=0, number_of_results=-1, sort=None, direction='asc'):
         invert = direction == 'desc'
         return cls.signature(interface='WSDocMgmt', method='getDocumentsInContentCategory',

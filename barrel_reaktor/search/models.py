@@ -1,5 +1,4 @@
 from barrel import Store, Field, FloatField, EmbeddedStoreField
-from barrel.cache import cache, sliced_call_args
 from barrel.rpc import RpcMixin
 from barrel_reaktor.document.models import Document
 
