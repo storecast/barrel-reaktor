@@ -1,6 +1,5 @@
 from barrel import Store, Field, BooleanField, EmbeddedStoreField, IntField, SplitField
 from barrel.rpc import RpcMixin
-from barrel.cache import cache
 
 
 class PasswordPolicy(Store):
@@ -38,6 +37,5 @@ class Company(Store, RpcMixin):
     natures = EmbeddedStoreField(target='natures', store_class=Nature, is_array=True)
 
     @classmethod
-    @cache(duration=3600*8)
     def get_by_name(cls, name):
         return cls.signature(method='getCompany', args=[name])
