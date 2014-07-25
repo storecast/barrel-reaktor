@@ -19,6 +19,7 @@ class Document(Store, RpcMixin):
         as_epub = BooleanField(target='available_as_epub') # should be deprecated soon
         as_pdf = BooleanField(target='available_as_pdf') # should be deprecated soon
         as_watermark = BooleanField(target='available_as_watermark') # should be deprecated soon
+        audience = Field(target='audience')
         author = Field(target='author', default=u'')
         author_bio = Field(target='author_biography', default='')
         catalog_id = Field(target='catalog_document_id')
