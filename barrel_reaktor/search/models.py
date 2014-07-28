@@ -5,6 +5,7 @@ from barrel_reaktor.document.models import Document
 
 class Stat(Store):
     count = Field(target="count")
+    id = Field(target="id")
     name = Field(target="name")
 
 
