@@ -1,6 +1,7 @@
 from barrel import Store, Field, FloatField, EmbeddedStoreField
 from barrel.rpc import RpcMixin
 from barrel_reaktor.document.models import Document
+from . import get_search_sources
 
 
 class Stat(Store):
@@ -30,6 +31,7 @@ class DocumentResult(Store):
         available_as_pdf_mobile = EmbeddedStoreField(target="available_as_pdf_mobile", store_class=Stat, is_array=True)
         category = EmbeddedStoreField(target="category", store_class=Stat, is_array=True)
         collection_title = EmbeddedStoreField(target="collectionTitle", store_class=Stat, is_array=True)
+        format = EmbeddedStoreField(target="format", store_class=Stat, is_array=True)
         language = EmbeddedStoreField(target="language", store_class=Stat, is_array=True)
         source = EmbeddedStoreField(target="source", store_class=Stat, is_array=True)
         tag = EmbeddedStoreField(target="tag", store_class=Stat, is_array=True)
@@ -55,11 +57,13 @@ class Search(RpcMixin):
     interface = 'WSSearchDocument'
 
     @classmethod
-    def documents(cls, token, search_string, offset, number_of_results, sort=None, direction=None, include_search_fields=None, sources=None, related=None, options=None):
+    def documents(cls, token, search_string, offset, number_of_results, sort=None, direction=None, include_search_fields=None, source=None, related=None, options=None):
         """Returns documents for a given string."""
         invert = direction == 'desc'
         if not options:
             options = {'resultType': 'Object'}
+        if source:
+            sources = get_search_sources(source)
         return cls.signature(method='searchDocuments', data_converter=DocumentResult,
             args=[token, search_string, sources, offset, number_of_results, sort, invert, related, include_search_fields, options])
 
