@@ -4,9 +4,6 @@ from holon import ReaktorArgumentError
 from money import Money
 
 
-COMMERCIAL_LICENSES = ['commercial-retailer-default', 'commercial-enduser-default', 'cc-publicdomain']
-
-
 class Document(Store, RpcMixin):
     interface = 'WSDocMgmt'
 
@@ -15,11 +12,7 @@ class Document(Store, RpcMixin):
         last_name = Field(target='lastName')
 
     class Attributes(Store):
-        as_epub = BooleanField(target='available_as_epub') # should be deprecated soon
-        as_pdf = BooleanField(target='available_as_pdf') # should be deprecated soon
-        as_watermark = BooleanField(target='available_as_watermark') # should be deprecated soon
         audience = Field(target='audience')
-        author = Field(target='author', default=u'')
         author_bio = Field(target='author_biography', default='')
         catalog_id = Field(target='catalog_document_id')
         content_provider_id = Field(target='content_provider_specific_id')
@@ -50,8 +43,6 @@ class Document(Store, RpcMixin):
         tax_group = Field(target='tax_group')
         title = Field(target='title', default=u'')
         undiscounted_price = FloatField(target='undiscounted_price')
-        via_iap = BooleanField(target='available_via_iap') # should be deprecated soon
-        with_adobe_drm = BooleanField(target='available_with_adobe_drm') # should be deprecated soon
         year = IntField(target='year')
 
         @property
@@ -72,15 +63,12 @@ class Document(Store, RpcMixin):
     _categories = EmbeddedStoreField(target='contentCategories', store_class='barrel_reaktor.category.models.Category', is_array=True)
     category_ids = Field(target='contentCategoryIDs')
     creation_date = DateField(target='creationTime')
-    creator = Field(target='creator')
     drm_type = Field(target='drmType')
     file_name = Field(target='fileName', default='')
     format = Field(target='format', default='')
     has_thumbnail = BooleanField(target='hasThumbnail')
-    in_public_list = BooleanField(target='inPublicList')
     lang_code = Field(target='languageCode')
     licenses = EmbeddedStoreField(target='licenses', store_class=License, is_array=True)
-    master_id = Field(target='documentMasterID')
     modification_date = DateField(target='modificationTime')
     name = Field(target='displayName')
     owner = Field(target='owner')
@@ -112,20 +100,21 @@ class Document(Store, RpcMixin):
         return self.user_state == 'FULFILLED' or self.is_upload
 
     @property
-    def is_user(self):
-        return self.type == 'USER'
-
-    @property
     def is_upload(self):
         return self.user_state == 'UPLOADED_BY_USER'
 
     @property
-    def is_commercial(self):
-        return any([l.key in COMMERCIAL_LICENSES for l in self.licenses])
+    def is_catalog(self):
+        return self.type == 'CATALOG'
+
+    @property
+    def is_user(self):
+        return self.type == 'USER'
 
     @property
     def has_drm(self):
-        return self.version_access_type == "ADEPT_DRM"
+        # drm_type can be (ADOBE_DRM, NONE, UNDEFINED, WATERMARK)
+        return self.drm_type in ('WATERMARK', 'ADOBE_DRM')
 
     @property
     def categories(self):
