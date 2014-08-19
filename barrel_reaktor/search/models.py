@@ -26,17 +26,19 @@ class DocumentResult(Store):
         """Represents stats about a search result, e.g. how many books for
         this language, how many books available as pdf, ...
         """
-        available_as_epub = EmbeddedStoreField(target="available_as_epub", store_class=Stat, is_array=True)
-        available_as_pdf = EmbeddedStoreField(target="available_as_pdf", store_class=Stat, is_array=True)
-        available_as_pdf_mobile = EmbeddedStoreField(target="available_as_pdf_mobile", store_class=Stat, is_array=True)
+        # available_as_epub = EmbeddedStoreField(target="available_as_epub", store_class=Stat, is_array=True)
+        # available_as_pdf = EmbeddedStoreField(target="available_as_pdf", store_class=Stat, is_array=True)
+        # available_as_pdf_mobile = EmbeddedStoreField(target="available_as_pdf_mobile", store_class=Stat, is_array=True)
         category = EmbeddedStoreField(target="category", store_class=Stat, is_array=True)
         collection_title = EmbeddedStoreField(target="collectionTitle", store_class=Stat, is_array=True)
+        drm = EmbeddedStoreField(target="drmType", store_class=Stat, is_array=True)
         format = EmbeddedStoreField(target="format", store_class=Stat, is_array=True)
+        price = EmbeddedStoreField(target="price", store_class=Stat, is_array=True)
         language = EmbeddedStoreField(target="language", store_class=Stat, is_array=True)
         source = EmbeddedStoreField(target="source", store_class=Stat, is_array=True)
         tag = EmbeddedStoreField(target="tag", store_class=Stat, is_array=True)
-        version_access_type = EmbeddedStoreField(target="currentVersionAccessType", store_class=Stat, is_array=True)
-        version_format = EmbeddedStoreField(target="currentVersionFormat", store_class=Stat, is_array=True)
+        # version_access_type = EmbeddedStoreField(target="currentVersionAccessType", store_class=Stat, is_array=True)
+        # version_format = EmbeddedStoreField(target="currentVersionFormat", store_class=Stat, is_array=True)
 
     # Without blocking search, other fields don't make sense anymore so there
     # they are just ignored.
