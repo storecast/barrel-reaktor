@@ -4,7 +4,7 @@ from setuptools import setup, find_packages
 
 setup(
     name='barrel-reaktor',
-    version='0.2.0',
+    version='0.2.1',
     description='python interface to reaktor API',
     long_description=__doc__,
     license='BSD',
