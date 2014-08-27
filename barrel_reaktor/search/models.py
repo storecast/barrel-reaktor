@@ -5,16 +5,28 @@ from . import get_search_sources
 
 
 class Stat(Store):
+    """The reaktor always passes in `name` as the value to use for the search
+    facet. Since it's a value, let's rename it. Some fields also provide a
+    label, which we keep untouched.
+    """
     count = Field(target="count")
-    id = Field(target="id")
-    name = Field(target="name")
+    value = Field(target="name")
+    label = Field(target="label")
+
+
+class CategoryStat(Store):
+    """Category searching facet is inconsistent with other facets.
+    This model is there as an attempt to normalize that.
+    """
+    count = Field(target="count")
+    value = Field(target="id")
+    label = Field(target="name")
 
 
 class DocumentResult(Store):
     """Search result object wrapping search itemsalongside search info
     like pagination information.
     """
-
     class DocumentItem(Store):
         """Search result item wrapping a document alongside search info like
         item relevance.
@@ -26,19 +38,16 @@ class DocumentResult(Store):
         """Represents stats about a search result, e.g. how many books for
         this language, how many books available as pdf, ...
         """
-        # available_as_epub = EmbeddedStoreField(target="available_as_epub", store_class=Stat, is_array=True)
-        # available_as_pdf = EmbeddedStoreField(target="available_as_pdf", store_class=Stat, is_array=True)
-        # available_as_pdf_mobile = EmbeddedStoreField(target="available_as_pdf_mobile", store_class=Stat, is_array=True)
-        category = EmbeddedStoreField(target="category", store_class=Stat, is_array=True)
+        category = EmbeddedStoreField(target="category", store_class=CategoryStat, is_array=True)
         collection_title = EmbeddedStoreField(target="collectionTitle", store_class=Stat, is_array=True)
         drm = EmbeddedStoreField(target="drmType", store_class=Stat, is_array=True)
         format = EmbeddedStoreField(target="format", store_class=Stat, is_array=True)
-        price = EmbeddedStoreField(target="price", store_class=Stat, is_array=True)
         language = EmbeddedStoreField(target="language", store_class=Stat, is_array=True)
+        price = EmbeddedStoreField(target="price", store_class=Stat, is_array=True)
+        pub_date = EmbeddedStoreField(target="publication_date", store_class=Stat, is_array=True)
+        rating = EmbeddedStoreField(target="rating", store_class=Stat, is_array=True)
         source = EmbeddedStoreField(target="source", store_class=Stat, is_array=True)
         tag = EmbeddedStoreField(target="tag", store_class=Stat, is_array=True)
-        # version_access_type = EmbeddedStoreField(target="currentVersionAccessType", store_class=Stat, is_array=True)
-        # version_format = EmbeddedStoreField(target="currentVersionFormat", store_class=Stat, is_array=True)
 
     # Without blocking search, other fields don't make sense anymore so there
     # they are just ignored.
