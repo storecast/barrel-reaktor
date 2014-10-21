@@ -98,6 +98,10 @@ class VoucherItem(Store, RpcMixin):
         """
         return cls.signature(method='removeVoucherFromBasket', args=[token, code, basket_id], data_converter=cls.Result)
 
+    @classmethod
+    def assign(cls, token, code):
+        return cls.signature(method='assignVoucherToUserAccount', args=[token, code], data_converter=cls.Result)
+
 
 def item_factory(data=None):
     """Item factory to get properly typed basket items."""
