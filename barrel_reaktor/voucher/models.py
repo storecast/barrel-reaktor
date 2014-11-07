@@ -35,5 +35,5 @@ class Voucher(Store, RpcMixin):
         return "WSTPercentVoucher" in self._java_cls
     
     @classmethod
-    def get(cls, token):
+    def get_by_token(cls, token):
         return cls.signature(method='getAssignedVouchers', args=[token])
