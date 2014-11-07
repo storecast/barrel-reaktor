@@ -113,9 +113,17 @@ class Document(Store, RpcMixin):
         return self.type == 'USER'
 
     @property
+    def is_adobe(self):
+        return self.drm_type is 'ADOBE_DRM'
+
+    @property
+    def is_watermark(self):
+        return self.drm_type is 'WATERMARK'
+
+    @property
     def has_drm(self):
         # drm_type can be (ADOBE_DRM, NONE, UNDEFINED, WATERMARK)
-        return self.drm_type in ('WATERMARK', 'ADOBE_DRM')
+        return self.is_adobe or self.is_watermark
 
     @property
     def categories(self):
