@@ -114,11 +114,11 @@ class Document(Store, RpcMixin):
 
     @property
     def is_adobe(self):
-        return self.drm_type is 'ADOBE_DRM'
+        return self.drm_type == 'ADOBE_DRM'
 
     @property
     def is_watermark(self):
-        return self.drm_type is 'WATERMARK'
+        return self.drm_type == 'WATERMARK'
 
     @property
     def has_drm(self):
