@@ -13,6 +13,7 @@ class Nature(Store, RpcMixin):
     interface = 'WSReaktorMgmt'
 
     name = Field(target='name')
+    available_in_multistore_app = BooleanField(target='availableInMultistoreApp')
     account_deletion_confirmation = BooleanField(target='enableAccountDeletionConfirmation')
     auth_hash_method = Field(target='authenticationHashAlgorithm')
     email_change_confirmation = BooleanField(target='enableEmailChangeConfirmation')
