@@ -13,6 +13,7 @@ class Document(Store, RpcMixin):
 
     class Attributes(Store):
         audience = Field(target='audience')
+        author = Field(target='author', default=u'')
         author_bio = Field(target='author_biography', default='')
         catalog_id = Field(target='catalog_document_id')
         content_provider_id = Field(target='content_provider_specific_id')
