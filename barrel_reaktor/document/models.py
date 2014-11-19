@@ -64,6 +64,7 @@ class Document(Store, RpcMixin):
     _categories = EmbeddedStoreField(target='contentCategories', store_class='barrel_reaktor.category.models.Category', is_array=True)
     category_ids = Field(target='contentCategoryIDs')
     creation_date = DateField(target='creationTime')
+    delivery_url = Field(target='deliveryUrl')
     drm_type = Field(target='drm')
     file_name = Field(target='fileName', default='')
     format = Field(target='format', default='')
