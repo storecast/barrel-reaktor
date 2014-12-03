@@ -200,3 +200,7 @@ class Document(Store, RpcMixin):
     @classmethod
     def change_attributes(cls, token, doc_ids, attributes):
         return cls.signature(method='changeDocumentAttributes', args=[token, doc_ids, attributes])
+
+    @classmethod
+    def remove_cover(cls, token, doc_id):
+        return cls.signature(method='removeCoverImage', args=[token, doc_id])
