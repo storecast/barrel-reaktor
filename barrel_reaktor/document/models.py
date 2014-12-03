@@ -20,6 +20,7 @@ class Document(Store, RpcMixin):
         content_provider_name = Field(target='content_provider_name')
         content_source_id = Field(target='content_source_id')
         cover_ratio = FloatField(target='cover_image_aspect_ratio')
+        cover_type = Field(target='cover_image_type')
         currency = Field(target='currency')
         description = Field(target='description')
         editors_comment = Field(target='editors_comment')
@@ -126,6 +127,10 @@ class Document(Store, RpcMixin):
     def has_drm(self):
         # drm_type can be (ADOBE_DRM, NONE, UNDEFINED, WATERMARK)
         return self.is_adobe or self.is_watermark
+
+    @property
+    def has_custom_cover(self):
+        return self.attributes.cover_type == 'USER_UPLOADED'
 
     @property
     def categories(self):
