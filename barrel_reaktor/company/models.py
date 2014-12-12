@@ -22,6 +22,7 @@ class Nature(Store, RpcMixin):
     home_country = Field(target='homeCountry')
     lockout_attempts = IntField(target='loginAttemptsBeforeLockout')
     lockout_duration = IntField(target='lockoutPeriodMinutes')
+    mobi_conversion = Field(target='mobiConversionEnabled')
     shop_currency = Field(target='shopCurrency')
     shop_url = Field(target='shopUrl')
     password_policy = EmbeddedStoreField(target='passwordPolicy', store_class=PasswordPolicy)
