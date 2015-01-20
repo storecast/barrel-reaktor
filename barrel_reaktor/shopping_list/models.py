@@ -55,7 +55,7 @@ def notification_factory(data=None):
 
 
 class ShoppingListItem(Store, RpcMixin):
-    interface='WSShopMgmt'
+    interface = 'WSShopMgmt'
 
     document = EmbeddedStoreField(target='document', store_class=Document)
     creation_date = DateField(target='creationDate')
@@ -127,7 +127,7 @@ class Preorderlist(Store, RpcMixin):
     def _alerts(self, alert_type, doc):
         alerts = []
         for alert in self.notifications:
-            if isinstance(alert, alert_type) and alert.isbn == doc.attributes.isbn:
+            if isinstance(alert, alert_type) and alert.isbn == doc.isbn:
                 alerts.append(alert)
         return alerts
 

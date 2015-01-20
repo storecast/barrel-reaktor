@@ -69,7 +69,7 @@ class Document(Store, RpcMixin):
     personal_votes = IntField(target='personalVotes:stars', default=0)
     previews = EmbeddedStoreField(target='documentPreviews',
                                   store_class=Preview, is_array=True)
-    price = FloatField(target='attributes:price')
+    _price = FloatField(target='attributes:price')
     publication_date = DateField(target='attributes:publication_date')
     publication_status = DateField(target='attributes:publication_status')
     publisher = Field(target='attributes:publisher')
@@ -79,7 +79,7 @@ class Document(Store, RpcMixin):
     title = Field(target='attributes:title', default=u'')
     title = Field(target='attributes:title', default=u'')
     type = Field(target='type')
-    undiscounted_price = FloatField(target='attributes:undiscounted_price')
+    _undiscounted_price = FloatField(target='attributes:undiscounted_price')
     user_state = Field(target='userDocumentState', default='?')
     user_tags = Field(target='userTags', default=[])
     version = IntField(target='version')
@@ -94,13 +94,13 @@ class Document(Store, RpcMixin):
 
     @property
     def price(self):
-        return Money(amount=self.attributes.price,
-                     currency=self.attributes.currency)
+        return Money(amount=self._price,
+                     currency=self.currency)
 
     @property
     def undiscounted_price(self):
-        return Money(amount=self.attributes.undiscounted_price,
-                     currency=self.attributes.currency)
+        return Money(amount=self._undiscounted_price,
+                     currency=self.currency)
 
     @property
     def is_preorder(self):
@@ -137,7 +137,7 @@ class Document(Store, RpcMixin):
 
     @property
     def has_custom_cover(self):
-        return self.attributes.cover_type == 'USER_UPLOADED'
+        return self.cover_type == 'USER_UPLOADED'
 
     @property
     def categories(self):
