@@ -34,6 +34,7 @@ class Nature(Store, RpcMixin):
                                          store_class=PasswordPolicy)
     shop_currency = Field(target='shopCurrency')
     shop_url = Field(target='shopUrl')
+    vendor_id_enabled = Field(target='vendorIdEnabled')
 
     @classmethod
     def get_by_name(cls, name):
